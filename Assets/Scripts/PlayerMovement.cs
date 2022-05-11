@@ -41,6 +41,10 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask groundLayerMask;
     private const float groundDistance = 0.3f;
 
+    [SerializeField]
+    private bool disabled = false;
+    public bool DisableMovement { set => disabled = value; }
+
     private float x, z;
     private Vector3 velocity;
     private Vector3 move;
@@ -60,57 +64,60 @@ public class PlayerMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // inputs & speed calculations
-        x = Input.GetAxis("Horizontal");
-        z = Input.GetAxis("Vertical");
-
-        float currentRunMultiplier = Input.GetButton("Run") ? runMultiplier : 1.0f;
-
-        if (Input.GetButtonDown("Crouch") && isGrounded)
+        if (!disabled)
         {
-            isCrouching = true;
-        }
-        else if (Input.GetButtonUp("Crouch"))
-        {
-            isCrouching = false;
-        }
-        float currentCrouchMultiplier = isCrouching ? crouchMultiplier : 1.0f;
+            // inputs & speed calculations
+            x = Input.GetAxis("Horizontal");
+            z = Input.GetAxis("Vertical");
 
-        // jump
-        if (isGrounded)
-        {
-            if (Input.GetButtonDown("Jump"))
+            float currentRunMultiplier = Input.GetButton("Run") ? runMultiplier : 1.0f;
+
+            if (Input.GetButtonDown("Crouch") && isGrounded)
             {
-                isLongJumping = true;
+                isCrouching = true;
+            }
+            else if (Input.GetButtonUp("Crouch"))
+            {
+                isCrouching = false;
+            }
+            float currentCrouchMultiplier = isCrouching ? crouchMultiplier : 1.0f;
+
+            // jump
+            if (isGrounded)
+            {
+                if (Input.GetButtonDown("Jump"))
+                {
+                    isLongJumping = true;
+                }
+
+                if (isLongJumping && isCrouching)
+                {
+                    currentJumpForce += Time.deltaTime * longJumpChargeTime;
+                }
+
+                if (Input.GetButtonUp("Jump"))
+                {
+                    currentJumpForce = Mathf.Clamp(currentJumpForce, maxUnitsJump * shortJumpMultiplier, maxUnitsJump);
+                    velocity.y = Mathf.Sqrt(currentJumpForce * -2.0f * gravity);
+
+                    isLongJumping = false;
+                    currentJumpForce = 0.0f;
+                }
             }
 
-            if (isLongJumping && isCrouching)
+            // movement
+            move = currentCrouchMultiplier * currentRunMultiplier * walkMultiplier * (Vector3.Normalize(transform.right * x + transform.forward * z));
+            controller.Move(move * Time.deltaTime);
+
+            // gravity
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayerMask);
+            if (isGrounded && velocity.y < 0.0f)
             {
-                currentJumpForce += Time.deltaTime * longJumpChargeTime;
+                velocity.y = gravity;
             }
-
-            if (Input.GetButtonUp("Jump"))
-            {
-                currentJumpForce = Mathf.Clamp(currentJumpForce, maxUnitsJump * shortJumpMultiplier, maxUnitsJump);
-                velocity.y = Mathf.Sqrt(currentJumpForce * -2.0f * gravity);
-
-                isLongJumping = false;
-                currentJumpForce = 0.0f;
-            }
+            velocity.y += gravity * Time.deltaTime;
+            controller.Move(velocity * Time.deltaTime);
         }
-
-        // movement
-        move = currentCrouchMultiplier * currentRunMultiplier * walkMultiplier * (Vector3.Normalize(transform.right * x + transform.forward * z));
-        controller.Move(move * Time.deltaTime);
-
-        // gravity
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayerMask);
-        if (isGrounded && velocity.y < 0.0f)
-        {
-            velocity.y = gravity;
-        }
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
     }
 
     private void OnDrawGizmos()

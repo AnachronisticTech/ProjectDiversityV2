@@ -4,15 +4,39 @@ using UnityEngine;
 
 public class PortalController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private GameObject Player;
+
+    [SerializeField]
+    private Transform teleportTo;
+
+    private PlayerMovement playerMovement;
+
+    private void Start()
     {
-        
+        playerMovement = Player.GetComponent<PlayerMovement>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag(Player.tag))
+        {
+            Debug.Log("Collided with " + this.name + ", teleporting to " + teleportTo.name + " ("+ teleportTo.position +")");
+
+            StartCoroutine(Teleport());
+        }
+    }
+
+    private IEnumerator Teleport()
+    {
+        playerMovement.DisableMovement = true;
+
+        yield return new WaitForSeconds(Time.deltaTime);
+
+        Player.transform.SetPositionAndRotation(teleportTo.position, teleportTo.rotation);
+
+        yield return new WaitForSeconds(Time.deltaTime);
         
+        playerMovement.DisableMovement = false;
     }
 }
