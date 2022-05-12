@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NPCNavigationController : MonoBehaviour
+public sealed class NPCNavigationController : MonoBehaviour
 {
     private System.Random random;
     

@@ -1,10 +1,10 @@
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(PlayerMovement)), CanEditMultipleObjects]
+[CustomEditor(typeof(PlayerController)), CanEditMultipleObjects]
 public class PlayerMovementInspector : Editor
 {
-    PlayerMovement root;
+    PlayerController root;
 
     private SerializedProperty walkMultiplier;
     private SerializedProperty runMultiplier;
@@ -24,7 +24,7 @@ public class PlayerMovementInspector : Editor
 
     private void OnEnable()
     {
-        root = (PlayerMovement)target;
+        root = (PlayerController)target;
 
         walkMultiplier = serializedObject.FindProperty(nameof(root.walkMultiplier));
         runMultiplier = serializedObject.FindProperty(nameof(root.runMultiplier));
