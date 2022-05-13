@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Collider))]
 public sealed class PortalController : MonoBehaviour
 {
     private PlayerController playerController;
@@ -10,10 +11,8 @@ public sealed class PortalController : MonoBehaviour
     [SerializeField]
     private Transform teleportTo;
 
-    //[SerializeField]
-    //private ParticleSystem transitionParticle;
-
-    private const float wait = 0.5f;
+    [SerializeField]
+    private Animator transitionAnimator;
 
     private void Start()
     {
@@ -24,8 +23,6 @@ public sealed class PortalController : MonoBehaviour
     {
         if (other.CompareTag(playerController.transform.tag))
         {
-            Debug.Log("Collided with " + this.name + ", teleporting to " + teleportTo.name + " ("+ teleportTo.position +")");
-
             StartCoroutine(Teleport());
         }
     }
@@ -34,13 +31,14 @@ public sealed class PortalController : MonoBehaviour
     {
         playerController.DisableMovement = true;
 
-        yield return new WaitForSeconds(wait);
+        transitionAnimator.SetTrigger("FadeIn");
+        yield return new WaitForSeconds(1.0f);
 
-        //transitionParticle.Play();
         playerController.transform.SetPositionAndRotation(teleportTo.position, teleportTo.rotation);
 
-        yield return new WaitForSeconds(wait);
-        
+        transitionAnimator.SetTrigger("FadeOut");
+        yield return new WaitForSeconds(1.0f);
+
         playerController.DisableMovement = false;
     }
 }

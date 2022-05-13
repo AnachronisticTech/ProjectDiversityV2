@@ -47,7 +47,7 @@ public sealed class PlayerController : CharacterActions
 
     [SerializeField]
     private bool disabled = false;
-    public bool DisableMovement { set => disabled = value; }
+    public bool DisableMovement { get => disabled;  set => disabled = value; }
 
     private float x, z;
     private Vector3 velocity;
