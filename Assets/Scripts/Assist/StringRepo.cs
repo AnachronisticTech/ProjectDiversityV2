@@ -4,7 +4,7 @@
      * public const string ConstStringName = "something2";
      */
 
-    public class PlayerMovement
+    public class Movement
     {
         public const string NavigationLabel = "Navigation";
         public const string WalkMultiplierToolTip = "Adjust how fast the player walks.";
@@ -18,13 +18,20 @@
         public const string CrouchingLabel = "Crouching";
         public const string CrouchMultiplierToolTip = "Multiplier that will apply to the current speed while the player is crouching.";
         public const string LongJumpChargeTime = "Affects the charge time of a crouch jump. The higher the number the faster it will fully charge.";
+    }
 
-        public const string GravityLabel = "Gravity modifiers";
+    public class Physics
+    {
         public const string PlanetToolTip = "Chose which planet's gravity you want to apply or add custom gravity value.";
-        
-        public const string CollisionLabel = "Collision data";
         public const string GroundTransformToolTip = "Assign the gameobject that you want to check for ground collision of the player.";
         public const string CollisionLayerMaskToolTip = "The masks that can affect gravity collision detection.";
+
+        public const string VisibilityLabel = "Visibility Data";
+    }
+
+    public class Waypoint
+    {
+        public const string WaypointLabel = "Waypoint Data";
     }
 
     public class Testing

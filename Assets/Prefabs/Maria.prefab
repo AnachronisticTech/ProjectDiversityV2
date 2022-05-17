@@ -29,6 +29,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
   m_LocalPosition: {x: -87, y: 0.04, z: 30.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3938342223959482313}
   m_Father: {fileID: 0}
@@ -79,10 +80,12 @@ MonoBehaviour:
   stopDistance: 0.372
   rotationSpeed: 6
   movementSpeed: 2.81
-  destination: {x: 0, y: 0, z: 0}
   currentWaypoint: {fileID: 0}
-  chanceOfFlippingDirection: 0.4620000123977661
-  isMovingClockwise: 0
+  chanceOfFlippingDirection: 0.462
+  hasWaitBeforeNextWaypoint: 0
+  chanceToWait: 0.25
+  minWaitTime: 0
+  maxWaitTime: 5
 --- !u!1 &3938342223225385242
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,6 +114,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0.75, z: 0.2559}
   m_LocalScale: {x: 0.87498623, y: 0.25, z: 0.5117247}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3938342223959482313}
   m_RootOrder: 1
@@ -193,6 +197,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3938342223959482313}
   m_RootOrder: 0
@@ -273,6 +278,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3938342223648637233}
   - {fileID: 3938342223225385241}

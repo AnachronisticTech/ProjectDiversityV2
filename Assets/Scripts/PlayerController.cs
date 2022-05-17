@@ -2,50 +2,38 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Planets
-{
-    Moon,
-    Mars,
-    Venus,
-    Earth,
-    Jupiter,
-    Custom
-}
-
 [RequireComponent(typeof(CharacterController))]
-public sealed class PlayerController : CharacterActions
+[RequireComponent(typeof(GravityController))]
+public sealed class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
 
-    private CharacterController controller;
+    private CharacterController characterController;
+    private GravityController gravityController;
 
-    [Range(1.0f, 10.0f), Tooltip(StringRepo.PlayerMovement.WalkMultiplierToolTip)]
+    [Header(StringRepo.Movement.NavigationLabel)]
+
+    [Range(1.0f, 10.0f), Tooltip(StringRepo.Movement.WalkMultiplierToolTip)]
     public float walkMultiplier = 5.0f;
-    [Range(1.0f, 2.0f), Tooltip(StringRepo.PlayerMovement.RunMultiplierToolTip)]
+    [Range(1.0f, 2.0f), Tooltip(StringRepo.Movement.RunMultiplierToolTip)]
     public float runMultiplier = 1.25f;
     private float currentRunMultiplier;
-    [Range(0.125f, 1.0f), Tooltip(StringRepo.PlayerMovement.CrouchMultiplierToolTip)]
+
+    [Header(StringRepo.Movement.JumpingLabel)]
+
+    [Range(0.1f, 2.0f), Tooltip(StringRepo.Movement.MaxJumpToolTip)]
+    public float maxUnitsJump = 0.75f;
+    [Range(0.25f, 1.0f), Tooltip(StringRepo.Movement.ShortJumpMultiplierToolTip)]
+    public float shortJumpMultiplier = 0.5f;
+    
+    [Header(StringRepo.Movement.CrouchingLabel)]
+
+    [Range(0.125f, 1.0f), Tooltip(StringRepo.Movement.CrouchMultiplierToolTip)]
     public float crouchMultiplier = 0.3f;
     private float currentCrouchMultiplier;
-
-    [Range(groundDistance, 2.0f), Tooltip(StringRepo.PlayerMovement.MaxJumpToolTip)]
-    public float maxUnitsJump = 0.75f;
-    [Range(0.25f, 1.0f), Tooltip(StringRepo.PlayerMovement.ShortJumpMultiplierToolTip)]
-    public float shortJumpMultiplier = 0.5f;
-    [Range(0.25f, 2.0f), Tooltip(StringRepo.PlayerMovement.LongJumpChargeTime)]
+    [Range(0.25f, 2.0f), Tooltip(StringRepo.Movement.LongJumpChargeTime)]
     public float longJumpChargeTime = 0.5f;
 
-    [Tooltip(StringRepo.PlayerMovement.PlanetToolTip)]
-    public Planets planet = Planets.Earth;
-    public float gravity = -9.81f;
-
-    [Tooltip(StringRepo.PlayerMovement.GroundTransformToolTip)]
-    public Transform groundCheck;
-    [Tooltip(StringRepo.PlayerMovement.CollisionLayerMaskToolTip)]
-    public LayerMask groundLayerMask;
-    private const float groundDistance = 0.3f;
-
-    [SerializeField]
     private bool disabled = false;
     public bool DisableMovement { get => disabled;  set => disabled = value; }
 
@@ -53,11 +41,9 @@ public sealed class PlayerController : CharacterActions
     private Vector3 velocity;
     private Vector3 move;
 
-    private bool isGrounded = false;
     private bool isCrouching = false;
     private bool isLongJumping = false;
     private float currentJumpForce;
-    public float GetCurrentJumpForce { get => currentJumpForce; }
 
     private void Awake()
     {
@@ -75,7 +61,8 @@ public sealed class PlayerController : CharacterActions
 
     private void Start()
     {
-        controller = GetComponent<CharacterController>();
+        characterController = GetComponent<CharacterController>();
+        gravityController = GetComponent<GravityController>();
     }
 
     private void Update()
@@ -92,13 +79,14 @@ public sealed class PlayerController : CharacterActions
 
     private void UpdateInputs()
     {
-        // inputs & speed calculations
+        #region Inputs & Speed inputs
+
         x = Input.GetAxis("Horizontal");
         z = Input.GetAxis("Vertical");
 
         currentRunMultiplier = Input.GetButton("Run") ? runMultiplier : 1.0f;
 
-        if (Input.GetButtonDown("Crouch") && isGrounded)
+        if (Input.GetButtonDown("Crouch") && gravityController.GetIsGrounded)
         {
             isCrouching = true;
         }
@@ -108,8 +96,11 @@ public sealed class PlayerController : CharacterActions
         }
         currentCrouchMultiplier = isCrouching ? crouchMultiplier : 1.0f;
 
-        // jump
-        if (isGrounded)
+        #endregion
+
+        #region Jump inputs
+
+        if (gravityController.GetIsGrounded)
         {
             if (Input.GetButtonDown("Jump"))
             {
@@ -123,35 +114,31 @@ public sealed class PlayerController : CharacterActions
 
             if (Input.GetButtonUp("Jump"))
             {
-                velocity.y = CalculateJump(currentJumpForce, maxUnitsJump, shortJumpMultiplier, gravity);
+                currentJumpForce = Mathf.Clamp(currentJumpForce, maxUnitsJump * shortJumpMultiplier, maxUnitsJump);
+                velocity.y = Mathf.Sqrt(currentJumpForce * -2.0f * gravityController.gravity); 
 
                 isLongJumping = false;
                 currentJumpForce = 0.0f;
             }
         }
+
+        #endregion
     }
 
     private void UpdateMovements()
     {
-        // movement
-        move = CalculateMove(x, z, currentCrouchMultiplier, currentRunMultiplier, walkMultiplier);
-        controller.Move(move * Time.deltaTime);
+        #region movement calculation
+
+        move = currentCrouchMultiplier * currentRunMultiplier * walkMultiplier * (Vector3.Normalize(transform.right * x + transform.forward * z));
+        characterController.Move(move * Time.deltaTime);
+        
+        #endregion
     }
 
     private void UpdateGravity()
     {
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundLayerMask);
-        velocity.y = CalculateGravity(isGrounded, velocity, gravity);
+        velocity.y = gravityController.UpdateGravity(velocity);
 
-        controller.Move(velocity * Time.deltaTime);
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (groundCheck != null)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(groundCheck.position, groundDistance);
-        }
+        characterController.Move(velocity * Time.deltaTime);
     }
 }
