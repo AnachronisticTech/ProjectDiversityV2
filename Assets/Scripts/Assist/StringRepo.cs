@@ -18,6 +18,9 @@
         public const string CrouchingLabel = "Crouching";
         public const string CrouchMultiplierToolTip = "Multiplier that will apply to the current speed while the player is crouching.";
         public const string LongJumpChargeTime = "Affects the charge time of a crouch jump. The higher the number the faster it will fully charge.";
+
+        public const string NavigationDebugLabel = "Show navigation data debug";
+        public const string CharacterVelocityString = "Character velocity: ";
     }
 
     public class Physics
@@ -32,10 +35,15 @@
     public class Waypoint
     {
         public const string WaypointLabel = "Waypoint Data";
+        
+        public const string WaypointDebugLabel = "Show waypoint data debug";
+        public const string WaypointDestinationString = "Waypoint destination: ";
     }
 
-    public class Testing
+    public class Debug
     {
         public const string OnlyForTestingToolTip = "Only for debuging reasons.";
+
+        public const string VisibilityDebugLabel = "Show visibility data debug";
     }
 }

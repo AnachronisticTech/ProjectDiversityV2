@@ -28,11 +28,10 @@ namespace HelperNamespace
             Gizmos.DrawRay(arrowTip, down);
         }
 
-        public static Mesh DrawWedgeMesh(float angle, float distance, float height)
+        public static Mesh DrawWedgeMesh(float angle, float distance, float height, int segments = 10)
         {
             Mesh mesh = new Mesh();
 
-            int segments = 10;
             int numTriangles = (segments * 4) + 4;
             int numVertices = numTriangles * 3;
 
@@ -109,6 +108,40 @@ namespace HelperNamespace
             mesh.RecalculateNormals();
 
             return mesh;
+        }
+
+        public static void Line(float height = 1.0f, float topSpace = 5.0f, float bottomSpace = 5.0f, Color? lineColor = null)
+        {
+            GUILayout.Space(topSpace);
+            
+            Rect rect = EditorGUILayout.GetControlRect(false, height);
+            rect.height = height;
+
+            Color color = lineColor ?? Color.white;
+            EditorGUI.DrawRect(rect, color);
+
+            GUILayout.Space(bottomSpace);
+        }
+
+        public static void Label(string labelText, int fontSize = 13, GUIStyle fontStyle = null, Color? textColor = null, TextAnchor labelAlignment = TextAnchor.MiddleLeft,  float topSpace = 5.0f, float bottomSpace = 5.0f, bool wordWrap = true, bool supportHTML = false)
+        {
+            GUILayout.Space(topSpace);
+
+            if (fontStyle == null)
+                fontStyle = GUIStyle.none;
+
+            GUIStyle style = new (fontStyle)
+            {
+                fontSize = fontSize,
+                alignment = labelAlignment,
+                wordWrap = wordWrap,
+                richText = supportHTML,
+            };
+            style.normal.textColor = textColor ?? new Color(0.8f, 0.8f, 0.8f, 1.0f);
+
+            EditorGUILayout.LabelField(labelText, style);
+
+            GUILayout.Space(bottomSpace);
         }
     }
 }

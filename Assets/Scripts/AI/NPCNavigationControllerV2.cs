@@ -11,7 +11,7 @@ using HelperNamespace;
 [RequireComponent(typeof(GravityController))]
 public sealed class NPCNavigationControllerV2 : MonoBehaviour
 {
-    private enum BehaviourMode
+    public enum BehaviourMode
     {
         partol,
         focused
@@ -22,71 +22,70 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
     private CharacterController characterController;
     private GravityController gravityController;
 
-    [SerializeField]
-    private BehaviourMode behaviorMode = BehaviourMode.partol;
+    public BehaviourMode behaviorMode = BehaviourMode.partol;
 
-    [Header(StringRepo.Physics.VisibilityLabel)]
     #region Visibility Variables
 
-    [SerializeField, Range(1.0f, 10.0f)]
-    private float viewDistance = 2.0f;
-    [SerializeField, Range(5.0f, 180.0f)]
-    private float viewAngle = 45.0f;
-    [SerializeField, Range(0.1f, 5.0f)]
-    private float viewHeight = 1.0f;
-    [SerializeField]
-    private Color lineOfSightGizmoColor = Color.red;
+    [Range(1.0f, 15.0f)]
+    public float viewDistance = 5.0f;
+    [Range(5.0f, 270.0f)]
+    public float viewAngle = 45.0f;
+    [Range(0.1f, 5.0f)]
+    public float viewHeight = 1.0f;
 
-    [SerializeField, Range(1, 100)]
-    private int scansPerSecond = 10;
-    [SerializeField]
-    private LayerMask interestLayerMask;
-    [SerializeField]
-    private LayerMask sightBlockLayerMask;
+    [Range(1, 50)]
+    public int scansPerSecond = 10;
+    public LayerMask interestLayerMask;
+    public LayerMask sightBlockLayerMask;
 
-    private Collider[] inSightCollidersCache = new Collider[3];
+    private readonly Collider[] inSightCollidersCache = new Collider[3];
     private int scansCount;
     private float scanInterval;
     private float scanTimer;
     private Mesh lineOfSightMesh;
 
     private GameObject inSightObject;
-    
+    public GameObject focusedObject;
+    private bool followFocusedObject = false;
+    [Range(10.0f, 25.0f)]
+    public float forgetFocusedObjectRange = 17.0f;
+
+    public bool showVisibilityGizmos = false;
+    public Color focusAreaGizmoColor = Color.green;
+    public Color unfocusAreaGizmoColor = Color.red;
+    [Range(3, 50)]
+    public int visionAreaSegments = 10;
+
     #endregion
 
-    [Header(StringRepo.Waypoint.WaypointLabel)]
     #region Waypoint Variables
 
-    [SerializeField]
-    private Waypoint currentWaypoint;
+    public Waypoint currentWaypoint;
     private Vector3 destination;
+    public string GetDestinationString { get => destination.ToString(); }
     private bool reachedDestination;
 
-    [SerializeField, Range(0.0f, 0.99f)]
-    private float chanceOfFlippingDirection = 0.25f;
+    [Range(0.0f, 0.99f)]
+    public float chanceOfFlippingDirection = 0.25f;
     private bool isMovingClockwise = false;
 
     #endregion
 
-    [Header(StringRepo.Movement.NavigationLabel)]
     #region Navigation Variables
 
-    [SerializeField, Range(0.0f, 1.0f)]
-    private float stopDistance = 0.5f;
-    [SerializeField, Range(1.0f, 20.0f)]
-    private float rotationSpeed = 5.0f;
-    [SerializeField, Range(1.0f, 5.0f)]
-    private float movementSpeed = 3.0f;
+    [Range(0.0f, 1.0f)]
+    public float stopDistance = 0.5f;
+    [Range(1.0f, 20.0f)]
+    public float rotationSpeed = 5.0f;
+    [Range(1.0f, 5.0f)]
+    public float movementSpeed = 3.0f;
     
     #endregion
 
-    [Header(StringRepo.Movement.JumpingLabel)]
     #region Jump Variables
 
-    [SerializeField]
-    private Transform jumpCheck;
-    [SerializeField]
-    private LayerMask jumpLayerMask;
+    public Transform jumpCheck;
+    public LayerMask jumpLayerMask;
     [Range(0.1f, 2.0f), Tooltip(StringRepo.Movement.MaxJumpToolTip)]
     public float maxUnitsJump = 0.75f;
     private const float jumpDistance = 0.3f;
@@ -94,10 +93,11 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
     #endregion
 
     private Vector3 velocity;
+    public string GetVelocityString { get => velocity.ToString(); }
 
     private void OnValidate()
     {
-        lineOfSightMesh = HelperNamespace.EditorTools.DrawWedgeMesh(viewAngle, viewDistance, viewHeight);
+        lineOfSightMesh = EditorTools.DrawWedgeMesh(viewAngle, viewDistance, viewHeight, visionAreaSegments);
         scanInterval = 1.0f / scansPerSecond;
     }
 
@@ -137,6 +137,18 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
                 velocity.y = Mathf.Sqrt(maxUnitsJump * -2.0f * gravityController.gravity);
             }
         }
+
+        if (followFocusedObject && focusedObject != null)
+        {
+            if (true)
+            {
+                //TODO: follow object until it gets out of forget radius
+
+
+                focusedObject = null;
+                followFocusedObject = false;
+            }
+        }
     }
 
     private void SetDestination(Vector3 destination)
@@ -162,6 +174,12 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
                 if (obj != null && IsInSight(obj))
                 {
                     inSightObject = obj;
+                    focusedObject = inSightObject;
+                    behaviorMode = BehaviourMode.focused;
+                }
+                else if (behaviorMode == BehaviourMode.focused)
+                {
+                    followFocusedObject = true;
                 }
             }
         }
@@ -198,7 +216,6 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
     {
         switch (behaviorMode)
         {
-            // TODO: rotates towards the waypoint but moves to wrong position.
             case BehaviourMode.partol:
                 {
                     if (transform.position != destination)
@@ -215,12 +232,12 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
                             Quaternion targetRotation = Quaternion.LookRotation(destinationDirection);
 
                             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-                            characterController.Move(movementSpeed * Time.deltaTime * Vector3.forward);
+                            characterController.Move(movementSpeed * Time.deltaTime * transform.forward);
                         }
-                    }
-                    else
-                    {
-                        reachedDestination = true;
+                        else
+                        {
+                            reachedDestination = true;
+                        }
                     }
 
                     if (reachedDestination)
@@ -250,6 +267,27 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
+    public void ClearStoredNavigationData()
+    {
+        int cacheCollidersCount = 0;
+        for (int i = 0; i < inSightCollidersCache.Length; i++)
+            if (inSightCollidersCache[i] != null)
+                cacheCollidersCount++;
+    
+        bool hasObjectInSight = false;
+        if (inSightObject != null)
+            hasObjectInSight = true;
+
+        if (cacheCollidersCount > 0 && hasObjectInSight)
+            Debug.Log("Cleared " + cacheCollidersCount + " in sight cache colliders and cleared focused in sight object.");
+        else if (cacheCollidersCount > 0 && !hasObjectInSight)
+            Debug.Log("Cleared " + cacheCollidersCount + " in sight cache colliders.");
+        else if (cacheCollidersCount < 0 && hasObjectInSight)
+            Debug.Log("Cleared focused in sight object");
+        else
+            Debug.Log("No objects found to clear.");
+    }
+
     private void OnDrawGizmos()
     {
         if (jumpCheck != null)
@@ -258,16 +296,17 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
             Gizmos.DrawWireSphere(jumpCheck.position, jumpDistance);
         }
 
-        if (lineOfSightMesh != null)
+        if (showVisibilityGizmos)
         {
-            Gizmos.color = lineOfSightGizmoColor;
-            Gizmos.DrawMesh(lineOfSightMesh, transform.position, transform.rotation);
-
-        }
-        
-        Gizmos.DrawWireSphere(transform.position, viewDistance);
-        Gizmos.color = Color.red;
-        for (int i = 0; i < scansCount; i++)
+            if (lineOfSightMesh != null)
+            {
+                Gizmos.color = focusAreaGizmoColor;
+                Gizmos.DrawMesh(lineOfSightMesh, transform.position, transform.rotation);
+            }
+            
+            Gizmos.DrawWireSphere(transform.position, viewDistance);
+            Gizmos.color = Color.red;
+            for (int i = 0; i < scansCount; i++)
         {
             if (inSightCollidersCache[i] != null)
             {
@@ -278,13 +317,17 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
             }
         }
 
-        Gizmos.color = Color.green;
-        if (inSightObject != null)
+            Gizmos.color = Color.green;
+            if (inSightObject != null)
         {
             Vector3 inSightGizmoPos = new Vector3(inSightObject.transform.position.x,
                                                   inSightObject.transform.position.y + inSightObject.transform.localScale.y,
                                                   inSightObject.transform.position.z);
             Gizmos.DrawSphere(inSightGizmoPos, 0.2f);
+        }
+
+            Gizmos.color = unfocusAreaGizmoColor;
+            Gizmos.DrawWireSphere(transform.position, forgetFocusedObjectRange);
         }
     }
 }
