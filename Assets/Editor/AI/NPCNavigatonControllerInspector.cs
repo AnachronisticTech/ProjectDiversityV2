@@ -21,9 +21,9 @@ public sealed class NPCNavigatonControllerInspector : Editor
     SerializedProperty forgetFocusedObjectRange;
     SerializedProperty viewAngle;
     SerializedProperty viewHeight;
-    SerializedProperty scansPerSecond;
     SerializedProperty interestLayerMask;
     SerializedProperty sightBlockLayerMask;
+    SerializedProperty scansPerSecond;
     SerializedProperty focusedObject;
     
     SerializedProperty showVisibilityGizmos;
@@ -60,9 +60,9 @@ public sealed class NPCNavigatonControllerInspector : Editor
         forgetFocusedObjectRange = serializedObject.FindProperty(nameof(root.forgetFocusedObjectRange));
         viewAngle = serializedObject.FindProperty(nameof(root.viewAngle));
         viewHeight = serializedObject.FindProperty(nameof(root.viewHeight));
-        scansPerSecond = serializedObject.FindProperty(nameof(root.scansPerSecond));
         interestLayerMask = serializedObject.FindProperty(nameof(root.interestLayerMask));
         sightBlockLayerMask = serializedObject.FindProperty(nameof(root.sightBlockLayerMask));
+        scansPerSecond = serializedObject.FindProperty(nameof(root.scansPerSecond));
         focusedObject = serializedObject.FindProperty(nameof(root.focusedObject));
 
         showVisibilityGizmos = serializedObject.FindProperty(nameof(root.showVisibilityGizmos));
@@ -100,9 +100,9 @@ public sealed class NPCNavigatonControllerInspector : Editor
         EditorGUILayout.PropertyField(forgetFocusedObjectRange);
         EditorGUILayout.PropertyField(viewAngle);
         EditorGUILayout.PropertyField(viewHeight);
-        EditorGUILayout.PropertyField(scansPerSecond);
         EditorGUILayout.PropertyField(interestLayerMask);
         EditorGUILayout.PropertyField(sightBlockLayerMask);
+        EditorGUILayout.PropertyField(scansPerSecond);
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
         showVisibilityDebug = GUILayout.Toggle(showVisibilityDebug, new GUIContent(StringRepo.Debug.VisibilityDebugLabel));
@@ -124,7 +124,7 @@ public sealed class NPCNavigatonControllerInspector : Editor
             
             GUILayout.Space(5.0f);
 
-            if (GUILayout.Button("Clear stored Navigation data"))
+            if (GUILayout.Button(StringRepo.Controllers.ClearStoredNavDataLabel))
             {
                 root.ClearStoredNavigationData();
             }
@@ -162,19 +162,19 @@ public sealed class NPCNavigatonControllerInspector : Editor
 
         #region Navigation data GUI
 
-        EditorTools.Label(StringRepo.Movement.NavigationLabel, 15, EditorStyles.boldLabel, Color.white, topSpace: 10);
+        EditorTools.Label(StringRepo.Controllers.NavigationLabel, 15, EditorStyles.boldLabel, Color.white, topSpace: 10);
 
         EditorGUILayout.PropertyField(stopDistance);
         EditorGUILayout.PropertyField(rotationSpeed);
         EditorGUILayout.PropertyField(movementSpeed);
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        showNavigationDebug = GUILayout.Toggle(showNavigationDebug, new GUIContent(StringRepo.Movement.NavigationDebugLabel));
+        showNavigationDebug = GUILayout.Toggle(showNavigationDebug, new GUIContent(StringRepo.Controllers.NavigationDebugLabel));
         if (showNavigationDebug)
         {
             GUILayout.Space(5.0f);
 
-            EditorTools.Label(StringRepo.Movement.CharacterVelocityString + root.GetVelocityString);
+            EditorTools.Label(StringRepo.Controllers.CharacterVelocityString + root.GetVelocityString);
 
             GUILayout.Space(5.0f);
         }
@@ -186,7 +186,7 @@ public sealed class NPCNavigatonControllerInspector : Editor
 
         #region Jump data GUI
 
-        EditorTools.Label(StringRepo.Movement.JumpingLabel, 15, EditorStyles.boldLabel, Color.white, topSpace: 10);
+        EditorTools.Label(StringRepo.Controllers.JumpingLabel, 15, EditorStyles.boldLabel, Color.white, topSpace: 10);
 
         EditorGUILayout.PropertyField(jumpCheck);
         EditorGUILayout.PropertyField(jumpLayerMask);

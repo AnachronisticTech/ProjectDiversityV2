@@ -72,18 +72,18 @@ public sealed class EntitySpawner : MonoBehaviour
 
                 Transform child = spawnPoints[i].waypointParent.GetChild(Random.Range(0, transform.childCount - 1));
 
-                if (characterObject.TryGetComponent(out NPCNavigationController waypointNavigator))
+                if (characterObject.TryGetComponent(out NPCNavigationControllerV2 waypointNavigator))
                 {
-                    NPCNavigationController characterWaypointNavigator = waypointNavigator;
+                    NPCNavigationControllerV2 characterWaypointNavigator = waypointNavigator;
                     
-                    characterWaypointNavigator.SetCurrentWaypoint = child.GetComponent<Waypoint>();
+                    characterWaypointNavigator.currentWaypoint = child.GetComponent<Waypoint>();
 
                     float chanceToFlipDirection = 0.0f;
                     if (spawnPoints[i].canFlipDirection)
                     {
                         chanceToFlipDirection = Random.Range(spawnPoints[i].minChance, spawnPoints[i].maxChance);
                     }
-                    characterWaypointNavigator.SetChanceOfFlippingDirection = chanceToFlipDirection;
+                    characterWaypointNavigator.chanceOfFlippingDirection = chanceToFlipDirection;
                 }
                 
                 characterObject.transform.position = child.position;

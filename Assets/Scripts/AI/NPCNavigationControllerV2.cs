@@ -33,10 +33,10 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
     [Range(0.1f, 5.0f)]
     public float viewHeight = 1.0f;
 
-    [Range(1, 50)]
-    public int scansPerSecond = 10;
     public LayerMask interestLayerMask;
     public LayerMask sightBlockLayerMask;
+    [Range(1, 30)]
+    public int scansPerSecond = 10;
 
     private readonly Collider[] inSightCollidersCache = new Collider[3];
     private int scansCount;
@@ -86,7 +86,7 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
 
     public Transform jumpCheck;
     public LayerMask jumpLayerMask;
-    [Range(0.1f, 2.0f), Tooltip(StringRepo.Movement.MaxJumpToolTip)]
+    [Range(0.1f, 2.0f), Tooltip(StringRepo.Controllers.MaxJumpToolTip)]
     public float maxUnitsJump = 0.75f;
     private const float jumpDistance = 0.3f;
     
@@ -140,10 +140,13 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
 
         if (followFocusedObject && focusedObject != null)
         {
+            // Set destination to target position
+            
+
+            // if target gets out of the unfocused area
             if (true)
             {
-                //TODO: follow object until it gets out of forget radius
-
+                // forget the target
 
                 focusedObject = null;
                 followFocusedObject = false;

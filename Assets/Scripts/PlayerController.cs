@@ -11,27 +11,27 @@ public sealed class PlayerController : MonoBehaviour
     private CharacterController characterController;
     private GravityController gravityController;
 
-    [Header(StringRepo.Movement.NavigationLabel)]
+    [Header(StringRepo.Controllers.NavigationLabel)]
 
-    [Range(1.0f, 10.0f), Tooltip(StringRepo.Movement.WalkMultiplierToolTip)]
+    [Range(1.0f, 10.0f), Tooltip(StringRepo.Controllers.WalkMultiplierToolTip)]
     public float walkMultiplier = 5.0f;
-    [Range(1.0f, 2.0f), Tooltip(StringRepo.Movement.RunMultiplierToolTip)]
+    [Range(1.0f, 2.0f), Tooltip(StringRepo.Controllers.RunMultiplierToolTip)]
     public float runMultiplier = 1.25f;
     private float currentRunMultiplier;
 
-    [Header(StringRepo.Movement.JumpingLabel)]
+    [Header(StringRepo.Controllers.JumpingLabel)]
 
-    [Range(0.1f, 2.0f), Tooltip(StringRepo.Movement.MaxJumpToolTip)]
+    [Range(0.1f, 2.0f), Tooltip(StringRepo.Controllers.MaxJumpToolTip)]
     public float maxUnitsJump = 0.75f;
-    [Range(0.25f, 1.0f), Tooltip(StringRepo.Movement.ShortJumpMultiplierToolTip)]
+    [Range(0.25f, 1.0f), Tooltip(StringRepo.Controllers.ShortJumpMultiplierToolTip)]
     public float shortJumpMultiplier = 0.5f;
     
-    [Header(StringRepo.Movement.CrouchingLabel)]
+    [Header(StringRepo.Controllers.CrouchingLabel)]
 
-    [Range(0.125f, 1.0f), Tooltip(StringRepo.Movement.CrouchMultiplierToolTip)]
+    [Range(0.125f, 1.0f), Tooltip(StringRepo.Controllers.CrouchMultiplierToolTip)]
     public float crouchMultiplier = 0.3f;
     private float currentCrouchMultiplier;
-    [Range(0.25f, 2.0f), Tooltip(StringRepo.Movement.LongJumpChargeTime)]
+    [Range(0.25f, 2.0f), Tooltip(StringRepo.Controllers.LongJumpChargeTime)]
     public float longJumpChargeTime = 0.5f;
 
     private bool disabled = false;

@@ -11,13 +11,16 @@ public class WaypointManagerWindow : EditorWindow
         GetWindow<WaypointManagerWindow>();
     }
 
+
+
+
     public Transform waypointRoot;
 
     private void OnGUI()
     {
         SerializedObject obj = new SerializedObject(this);
 
-        EditorGUILayout.PropertyField(obj.FindProperty("waypointRoot"));
+        EditorGUILayout.PropertyField(obj.FindProperty(nameof(waypointRoot)));
 
         if (waypointRoot == null)
         {
