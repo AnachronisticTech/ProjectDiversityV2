@@ -4,6 +4,7 @@ using UnityEngine;
 
 using HelperNamespace;
 
+[ExecuteInEditMode]
 /// <summary>
 ///     [What does this NPCNavigationControllerV2 do]
 /// </summary>
@@ -144,12 +145,14 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
             
 
             // if target gets out of the unfocused area
-            if (true)
+            if (Physics.CheckSphere(transform.position, forgetFocusedObjectRange, interestLayerMask))
             {
                 // forget the target
-
                 focusedObject = null;
                 followFocusedObject = false;
+
+                // set state to partol
+                behaviorMode = BehaviourMode.partol;
             }
         }
     }
@@ -308,29 +311,42 @@ public sealed class NPCNavigationControllerV2 : MonoBehaviour
             }
             
             Gizmos.DrawWireSphere(transform.position, viewDistance);
+
             Gizmos.color = Color.red;
             for (int i = 0; i < scansCount; i++)
-        {
-            if (inSightCollidersCache[i] != null)
             {
-                Vector3 inRangeGizmoPos = new Vector3(inSightCollidersCache[i].transform.position.x,
-                                                      inSightCollidersCache[i].transform.position.y + inSightCollidersCache[i].transform.localScale.y,
-                                                      inSightCollidersCache[i].transform.position.z);
-                Gizmos.DrawSphere(inRangeGizmoPos, 0.2f);
+                if (inSightCollidersCache[i] != null)
+                {
+                    Vector3 inRangeGizmoPos = new Vector3(inSightCollidersCache[i].transform.position.x,
+                                                          inSightCollidersCache[i].transform.position.y + inSightCollidersCache[i].transform.localScale.y,
+                                                          inSightCollidersCache[i].transform.position.z);
+                    Gizmos.DrawSphere(inRangeGizmoPos, 0.2f);
+                }
             }
-        }
 
             Gizmos.color = Color.green;
             if (inSightObject != null)
-        {
-            Vector3 inSightGizmoPos = new Vector3(inSightObject.transform.position.x,
-                                                  inSightObject.transform.position.y + inSightObject.transform.localScale.y,
-                                                  inSightObject.transform.position.z);
-            Gizmos.DrawSphere(inSightGizmoPos, 0.2f);
-        }
+            {
+                Vector3 inSightGizmoPos = new Vector3(inSightObject.transform.position.x,
+                                                      inSightObject.transform.position.y + inSightObject.transform.localScale.y,
+                                                      inSightObject.transform.position.z);
+                Gizmos.DrawSphere(inSightGizmoPos, 0.2f);
+            }
 
             Gizmos.color = unfocusAreaGizmoColor;
             Gizmos.DrawWireSphere(transform.position, forgetFocusedObjectRange);
+
+            Gizmos.color = Color.blue;
+            if (focusedObject != null)
+            {
+                if (Vector3.Distance(transform.position, focusedObject.transform.position) > viewDistance && Vector3.Distance(transform.position, focusedObject.transform.position) < forgetFocusedObjectRange)
+                {
+                    Vector3 inSightGizmoPos = new Vector3(focusedObject.transform.position.x,
+                                                          focusedObject.transform.position.y + focusedObject.transform.localScale.y,
+                                                          focusedObject.transform.position.z);
+                    Gizmos.DrawSphere(inSightGizmoPos, 0.2f);
+                }
+            }
         }
     }
 }

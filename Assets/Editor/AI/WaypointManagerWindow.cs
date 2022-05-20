@@ -11,9 +11,6 @@ public class WaypointManagerWindow : EditorWindow
         GetWindow<WaypointManagerWindow>();
     }
 
-
-
-
     public Transform waypointRoot;
 
     private void OnGUI()
