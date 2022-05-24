@@ -34,7 +34,8 @@
 /[Bb]uilds
 #
 # Training environments
-/envs
+/[Vv]irtual[Ee]nviroment
+/[Vv]env
 #
 # Environemnt logfile
 *Project.log
