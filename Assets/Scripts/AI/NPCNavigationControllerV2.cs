@@ -4,7 +4,6 @@ using UnityEngine;
 
 using HelperNamespace;
 
-[ExecuteInEditMode]
 /// <summary>
 ///     [What does this NPCNavigationControllerV2 do]
 /// </summary>
