@@ -40,10 +40,15 @@
         public const string WaypointDestinationString = "Waypoint destination: ";
     }
 
+    public class POV
+    {
+        public const string VisibilityDataDebugLabel = "Show visibility data debug";
+        public const string ShowVisibilityGizmosLabel = "Show visibility gizmos";
+    }
+
     public class Debug
     {
         public const string OnlyForTestingToolTip = "Only for debuging reasons.";
 
-        public const string VisibilityDebugLabel = "Show visibility data debug";
     }
 }

@@ -87,7 +87,7 @@ public sealed class MoveToGoal : Agent
         ActionSegment<float> continiousActions = actionsOut.ContinuousActions;
 
         // TODO: finish this
-        continiousActions[0] = Input.GetAxisRaw("Horizontal")
+        continiousActions[0] = Input.GetAxisRaw("Horizontal");
     }
 
     private void FixedUpdate()

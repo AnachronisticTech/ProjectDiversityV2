@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
+[RequireComponent(typeof(POV))]
 public sealed class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
@@ -34,6 +35,14 @@ public sealed class PlayerController : MonoBehaviour
     [Range(0.25f, 2.0f), Tooltip(StringRepo.Controllers.LongJumpChargeTime)]
     public float longJumpChargeTime = 0.5f;
 
+    [Header("Interact Data")]
+    [SerializeField, Range(0.5f, 2.5f)]
+    private float interactRange = 1.0f;
+    public GameObject target;
+
+    private POV pov;
+    private RaycastHit hit;
+
     private bool disabled = false;
     public bool DisableMovement { get => disabled;  set => disabled = value; }
 
@@ -63,6 +72,8 @@ public sealed class PlayerController : MonoBehaviour
     {
         characterController = GetComponent<CharacterController>();
         gravityController = GetComponent<GravityController>();
+
+        pov = GetComponent<POV>();
     }
 
     private void Update()
@@ -79,6 +90,23 @@ public sealed class PlayerController : MonoBehaviour
 
     private void UpdateInputs()
     {
+        #region Mouse Inputs
+
+        target = pov.focusedObject;
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out hit, interactRange))
+            {
+                if (hit.transform.gameObject == target)
+                {
+                    Debug.Log("Clicked on: " + target.name);
+                }
+            }
+        }
+
+        #endregion
+
         #region Inputs & Speed inputs
 
         x = Input.GetAxis("Horizontal");
@@ -140,5 +168,11 @@ public sealed class PlayerController : MonoBehaviour
         velocity.y = gravityController.UpdateGravity(velocity);
 
         characterController.Move(velocity * Time.deltaTime);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, interactRange);
     }
 }
