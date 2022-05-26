@@ -32,7 +32,7 @@ public sealed class POV : MonoBehaviour
     private Mesh lineOfSightMesh;
 
     [HideInInspector, Range(1, 10)]
-    public int scansPerSeconds = 5;
+    public byte scansPerSeconds = 5;
     [HideInInspector]
     public List<GameObject> inSightObjects = new List<GameObject>();
     [HideInInspector]
@@ -74,17 +74,12 @@ public sealed class POV : MonoBehaviour
             for (int i = 0; i < scansCount; i++)
             {
                 GameObject obj = inSightCollidersCache[i].gameObject;
-                if (obj != null && IsInSight(obj))
+                if (obj != null && obj != gameObject && IsInSight(obj))
                 {
                     inSightObjects.Add(obj);
-
-                    focusedObject = FindNearestObject();
-                }
-                else
-                {
-                    focusedObject = null;
                 }
             }
+            focusedObject = SortingTools.GetNearestGameObject(pivot, inSightObjects);
         }
     }
 
@@ -113,25 +108,6 @@ public sealed class POV : MonoBehaviour
         }
 
         return true;
-    }
-
-    private GameObject FindNearestObject()
-    {
-        GameObject closestObj = null;
-        float minDistance = Mathf.Infinity;
-        Vector3 currentPosition = pivot.position;
-
-        foreach (GameObject obj in inSightObjects)
-        {
-            float dist = Vector3.Distance(obj.transform.position, currentPosition);
-            if (dist < minDistance)
-            {
-                closestObj = obj;
-                minDistance = dist;
-            }
-        }
-
-        return closestObj;
     }
 
     private void OnDrawGizmos()

@@ -52,11 +52,13 @@ public sealed class EntitySpawner : MonoBehaviour
     [SerializeField]
     private List<SpawnPoints> spawnPoints = new List<SpawnPoints>() { new SpawnPoints() };
 
+    [System.Obsolete("This coroutine is Obsolete untill the new Navigation Controller is done.")]
     private void Start()
     {
         StartCoroutine(Spawn());
     }
 
+    [System.Obsolete("This coroutine is Obsolete untill the new Navigation Controller is done.")]
     private IEnumerator Spawn()
     {
         for (int i = 0; i < spawnPoints.Count; i++)

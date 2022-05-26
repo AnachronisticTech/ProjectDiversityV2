@@ -9,26 +9,27 @@ using HelperNamespace;
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
+[RequireComponent(typeof(Stats))]
 [RequireComponent(typeof(POV))]
 public sealed class EnemyController : MonoBehaviour
 {
-    public float health = 100.0f;
-    [SerializeField]
-    private float attackDamage = 5.0f;
-    [SerializeField]
-    private float attackSpeed = 2.0f;
-    
-    [SerializeField]
-    private float currentAttackTimer = 0.0f;
-
-    private POV pov;
+    private StatsScriptableObject stats;
 
     [SerializeField, Range(0.5f, 2.5f)]
     private float interactRange = 1.0f;
 
+    private float currentAttackTimer = 0.0f;
+    private POV pov;
+
     private void Start()
     {
         pov = GetComponent<POV>();
+
+        stats = GetComponent<Stats>().stats;
+        foreach (KeyValuePair<string, Stat> statEntry in stats.statsDict)
+        {
+            Debug.Log(this.name + " has " + statEntry.Value.GetName() + " as a stat.");
+        }
     }
 
     private void Update()
@@ -42,7 +43,14 @@ public sealed class EnemyController : MonoBehaviour
             float distance = Vector3.Distance(PlayerController.Instance.transform.position, transform.position);
             if (distance <= interactRange)
             {
-                Attack(attackDamage);
+                if (stats.statsDict.TryGetValue("AttackDamage", out Stat attackDamage))
+                {
+                    Attack(attackDamage.GetValue());
+                }
+                else
+                {
+                    Debug.LogError("AttackDamage stat not found in " + this);
+                }
             }
         }
     }
@@ -54,23 +62,45 @@ public sealed class EnemyController : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        Debug.Log("Enemy " + this.name + " took " + amount + " damage.");
-
-        health -= amount;
-
-        if (health <= 0.0f)
+        if (stats.statsDict.TryGetValue("Health", out Stat health))
         {
-            Die();
+            Debug.Log("Enemy " + this.name + " took " + amount + " damage.");
+        
+            if (health.DecreaseValue(amount))
+            {
+                Die();
+            }
+        }
+        else
+        {
+            Debug.LogError("AttackDamage stat not found in " + this);
         }
     }
 
     public void Attack(float amount)
     {
         currentAttackTimer += Time.deltaTime;
-        if (currentAttackTimer >= attackSpeed)
+        if (stats.statsDict.TryGetValue("AttackSpeed", out Stat attackSpeed))
         {
-            Debug.Log("fighting... Dealed: " + amount + " damage to -> " + pov.focusedObject);
-            currentAttackTimer = 0;
+            if (currentAttackTimer >= attackSpeed.GetValue())
+            {
+                Debug.Log("fighting... Dealed: " + amount + " damage to -> " + pov.focusedObject);
+                
+                StatsScriptableObject targetStats = PlayerController.Instance.GetComponent<StatsScriptableObject>();
+                if (targetStats.statsDict.TryGetValue("Health", out Stat health))
+                {
+                    if (health.DecreaseValue(amount))
+                    {
+                        PlayerController.Instance.Die();
+                    }
+                }
+
+                currentAttackTimer = 0;
+            }
+        }
+        else
+        {
+            Debug.LogError("AttackSpeed stat not found in " + this);
         }
     }
 

@@ -144,4 +144,40 @@ namespace HelperNamespace
             GUILayout.Space(bottomSpace);
         }
     }
+
+    public static class SortingTools
+    {
+        public static GameObject GetNearestGameObject(Transform origin, List<GameObject> listOfObjects)
+        {
+            GameObject closestObj = null;
+
+            float minDistance = Mathf.Infinity;
+            Vector3 currentPosition = origin.position;
+
+            foreach (GameObject obj in listOfObjects)
+            {
+                float dist = Vector3.Distance(obj.transform.position, currentPosition);
+                if (dist < minDistance)
+                {
+                    closestObj = obj;
+                    minDistance = dist;
+                }
+            }
+
+            return closestObj;
+        }
+    }
+    
+    public static class ValueCheck
+    {
+        public static bool IsFloatLessThan(float value1, float value2, float precision = 0.005f)
+        {
+            return Mathf.Abs(value1 - value2) < precision;
+        }
+
+        public static bool IsFloatMoreThan(float value1, float value2, float precision = 0.005f)
+        {
+            return Mathf.Abs(value1 - value2) > precision;
+        }
+    }
 }

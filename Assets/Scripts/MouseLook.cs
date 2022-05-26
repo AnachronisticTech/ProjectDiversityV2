@@ -5,16 +5,16 @@ using UnityEngine;
 public class MouseLook : MonoBehaviour
 {
     [SerializeField, Range(1.0f, 10.0f)]
-    private float mouseSensitivity = 8.0f;
-    private const float mouseSensOffset = 100.0f;
+    private float mouseSensitivity = 6.0f;
 
-    private Transform player;
-
-    private float xRotation;
-    private float mouseX, mouseY;
+    private readonly float yRotationLimit = 75.0f;
+    private float currentYRotation;
+    private Vector2 mousePosition = Vector2.zero;
+    
+    private Transform player = null;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         player = transform.parent;
 
@@ -22,15 +22,19 @@ public class MouseLook : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
-        mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * mouseSensOffset * Time.deltaTime;
-        mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * mouseSensOffset * Time.deltaTime;
+        mousePosition.x = Input.GetAxis("Mouse X") * mouseSensitivity;
+        mousePosition.y = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90.0f, 80.0f);
+        currentYRotation = Mathf.Clamp(currentYRotation, -yRotationLimit, yRotationLimit);
+        currentYRotation += mousePosition.y;
 
-        transform.localRotation = Quaternion.Euler(xRotation, 0.0f, 0.0f);
-        player.Rotate(Vector3.up * mouseX);
+        Quaternion xQuaternion = Quaternion.AngleAxis(mousePosition.x, Vector3.up);
+        Quaternion yQuaternion = Quaternion.AngleAxis(currentYRotation, Vector3.left);
+
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, xQuaternion * yQuaternion, Time.deltaTime * 10.0f);
+
+        player.Rotate(Vector3.up * mousePosition.x);
     }
 }

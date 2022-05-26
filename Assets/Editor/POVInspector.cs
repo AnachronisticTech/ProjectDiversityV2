@@ -58,25 +58,11 @@ public sealed class POVInspector : Editor
             EditorTools.Line();
 
             EditorGUILayout.PropertyField(scansPerSeconds);
-            if (root.inSightObjects.Count > 0)
-            {
-                for (int i = 0; i < root.inSightObjects.Count; i++)
-                {
-                    EditorGUILayout.ObjectField(root.inSightObjects[i], typeof(GameObject), true);
-                }
-            }
-            else
-            {
-                EditorGUILayout.ObjectField(new GUIContent("In Sight Objects"), null, typeof(GameObject), true);
 
-                //EditorGUILayout.BeginHorizontal();
-                //EditorGUILayout.LabelField("In Sight Objects");
-                //
-                //EditorGUILayout.LabelField("No objects in sight", EditorStyles.objectField);
-                //
-                //EditorGUILayout.EndHorizontal();
-            }
-            //EditorGUILayout.PropertyField(inSightObjects);
+            EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+            EditorGUILayout.PropertyField(inSightObjects);
+            EditorGUILayout.EndVertical();
+
             EditorGUILayout.PropertyField(focusedObject);
 
             GUILayout.Space(5.0f);
