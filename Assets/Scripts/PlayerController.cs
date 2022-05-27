@@ -7,8 +7,6 @@ using UnityEngine;
 [RequireComponent(typeof(Stats))]
 [RequireComponent(typeof(POV))]
 
-// TODO: PLayer does not move!
-
 public sealed class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
@@ -16,30 +14,45 @@ public sealed class PlayerController : MonoBehaviour
     private CharacterController characterController;
     private GravityController gravityController;
 
-    private StatsScriptableObject stats;
-
-    //[Header(StringRepo.Controllers.NavigationLabel)]
-    //
-    //[Range(1.0f, 10.0f), Tooltip(StringRepo.Controllers.WalkMultiplierToolTip)]
-    //public float walkMultiplier = 5.0f;
-    //[Range(1.0f, 2.0f), Tooltip(StringRepo.Controllers.RunMultiplierToolTip)]
-    //public float runMultiplier = 1.25f;
-    private float currentRunMultiplier;
-
-    //[Header(StringRepo.Controllers.JumpingLabel)]
-    //
-    //[Range(0.1f, 2.0f), Tooltip(StringRepo.Controllers.MaxJumpToolTip)]
-    //public float maxUnitsJump = 0.75f;
-    //[Range(0.25f, 1.0f), Tooltip(StringRepo.Controllers.ShortJumpMultiplierToolTip)]
-    //public float shortJumpMultiplier = 0.5f;
+    [SerializeField]
+    private float statUpdatesPerSecond = 2.0f;
+    private float currentUpdateStatTick = 0.0f;
     
-    //[Header(StringRepo.Controllers.CrouchingLabel)]
-    //
-    //[Range(0.125f, 1.0f), Tooltip(StringRepo.Controllers.CrouchMultiplierToolTip)]
-    //public float crouchMultiplier = 0.3f;
+    private Stats playerStats;
+    private float _health;
+    private float _walkSpeed;
+    private float _runSpeed;
+    private float _crouchSpeed;
+    private float _maxJumpChargeTime;
+    private float _maxJumpUnits;
+    private float _shortJumpUnits;
+
+    private float currentRunMultiplier;
     private float currentCrouchMultiplier;
-    //[Range(0.25f, 2.0f), Tooltip(StringRepo.Controllers.LongJumpChargeTime)]
-    //public float longJumpChargeTime = 0.5f;
+
+    #region temp
+    /**
+    [Header(StringRepo.Controllers.NavigationLabel)]
+    
+    [Range(1.0f, 10.0f), Tooltip(StringRepo.Controllers.WalkMultiplierToolTip)]
+    public float walkMultiplier = 5.0f;
+    [Range(1.0f, 2.0f), Tooltip(StringRepo.Controllers.RunMultiplierToolTip)]
+    public float runMultiplier = 1.25f;
+    [Header(StringRepo.Controllers.JumpingLabel)]
+    
+    [Range(0.1f, 2.0f), Tooltip(StringRepo.Controllers.MaxJumpToolTip)]
+    public float maxUnitsJump = 0.75f;
+    [Range(0.25f, 1.0f), Tooltip(StringRepo.Controllers.ShortJumpMultiplierToolTip)]
+    public float shortJumpMultiplier = 0.5f;
+    
+    [Header(StringRepo.Controllers.CrouchingLabel)]
+    
+    [Range(0.125f, 1.0f), Tooltip(StringRepo.Controllers.CrouchMultiplierToolTip)]
+    public float crouchMultiplier = 0.3f;
+    [Range(0.25f, 2.0f), Tooltip(StringRepo.Controllers.LongJumpChargeTime)]
+    public float longJumpChargeTime = 0.5f;
+    */
+    #endregion
 
     [Header("Interact Data")]
     [SerializeField, Range(0.5f, 2.5f)]
@@ -79,11 +92,7 @@ public sealed class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         gravityController = GetComponent<GravityController>();
 
-        stats = GetComponent<Stats>().stats;
-        foreach (KeyValuePair<string, Stat> statEntry in stats.statsDict)
-        {
-            Debug.Log(this.name + " has " + statEntry.Value.GetName() + " as a stat.");
-        }
+        playerStats = GetComponent<Stats>();
 
         pov = GetComponent<POV>();
     }
@@ -102,6 +111,12 @@ public sealed class PlayerController : MonoBehaviour
             UpdateMovements();
 
             UpdateGravity();
+        }
+
+        currentUpdateStatTick += Time.deltaTime;
+        if (currentUpdateStatTick >= statUpdatesPerSecond)
+        {
+            UpdateStats();
         }
     }
 
@@ -128,35 +143,37 @@ public sealed class PlayerController : MonoBehaviour
         x = Input.GetAxis("Horizontal");
         z = Input.GetAxis("Vertical");
 
-        if (Input.GetButton("Run"))
-        {
-            if (stats.statsDict.TryGetValue("RunSpeed", out Stat runSpeed))
-            {
-                currentRunMultiplier = runSpeed.GetValue();
-            }
-            else
-            {
-                Debug.LogError("RunSpeed stat not found in " + this);
-            }
-        }
-        else
-        {
-            currentRunMultiplier = 1.0f;
-        }
+        //if (Input.GetButton("Run"))
+        //{
+        //    if (playerStats.GetStatsDict.TryGetValue("RunSpeed", out Stat runSpeed))
+        //    {
+        //        currentRunMultiplier = runSpeed.GetValue();
+        //    }
+        //    else
+        //    {
+        //        Debug.LogError("RunSpeed stat not found in " + this);
+        //    }
+        //}
+        //else
+        //{
+        //    currentRunMultiplier = 1.0f;
+        //}
         //currentRunMultiplier = Input.GetButton("Run") ? runMultiplier : 1.0f;
+        currentRunMultiplier = Input.GetButton("Run") ? _runSpeed : 1.0f;
 
         if (Input.GetButtonDown("Crouch") && gravityController.GetIsGrounded)
         {
             isCrouching = true;
 
-            if (stats.statsDict.TryGetValue("CrouchSpeed", out Stat crouchSpeed))
-            {
-                currentCrouchMultiplier = crouchSpeed.GetValue();
-            }
-            else
-            {
-                Debug.LogError("CrouchSpeed stat not found in " + this);
-            }
+            //if (playerStats.GetStatsDict.TryGetValue("CrouchSpeed", out Stat crouchSpeed))
+            //{
+            //    currentCrouchMultiplier = crouchSpeed.GetValue();
+            //}
+            //else
+            //{
+            //    Debug.LogError("CrouchSpeed stat not found in " + this);
+            //}
+            currentCrouchMultiplier = _crouchSpeed;
         }
         else if (Input.GetButtonUp("Crouch"))
         {
@@ -179,24 +196,30 @@ public sealed class PlayerController : MonoBehaviour
 
             if (isLongJumping && isCrouching)
             {
-                if (stats.statsDict.TryGetValue("MaxJumpChargeTime", out Stat longJumpChargeTime))
-                {
-                    currentJumpForce += Time.deltaTime * longJumpChargeTime.GetValue();
-                }
-                else
-                {
-                    Debug.LogError("MaxJumpChargeTime stat not found in " + this);
-                }
+                //if (playerStats.GetStatsDict.TryGetValue("MaxJumpChargeTime", out Stat longJumpChargeTime))
+                //{
+                //    currentJumpForce += Time.deltaTime * longJumpChargeTime.GetValue();
+                //}
+                //else
+                //{
+                //    Debug.LogError("MaxJumpChargeTime stat not found in " + this);
+                //}
                 //currentJumpForce += Time.deltaTime * longJumpChargeTime;
+                currentJumpForce += Time.deltaTime * _maxJumpChargeTime;
             }
 
             if (Input.GetButtonUp("Jump"))
             {
-                if (stats.statsDict.TryGetValue("MaxJumpUnits", out Stat maxJumpUnits) && stats.statsDict.TryGetValue("ShortJumpUnits", out Stat shortJumpUnits))
-                {
-                    currentJumpForce = Mathf.Clamp(currentJumpForce, maxJumpUnits.GetValue() * shortJumpUnits.GetValue(), maxJumpUnits.GetValue());
-                }
+                //if (playerStats.GetStatsDict.TryGetValue("MaxJumpUnits", out Stat maxJumpUnits) && playerStats.GetStatsDict.TryGetValue("ShortJumpUnits", out Stat shortJumpUnits))
+                //{
+                //    currentJumpForce = Mathf.Clamp(currentJumpForce, maxJumpUnits.GetValue() * shortJumpUnits.GetValue(), maxJumpUnits.GetValue());
+                //}
+                //else
+                //{
+                //    Debug.LogError("MaxJumpUnits stat not found in " + this);
+                //}
                 //currentJumpForce = Mathf.Clamp(currentJumpForce, maxUnitsJump * shortJumpMultiplier, maxUnitsJump);
+                currentJumpForce = Mathf.Clamp(currentJumpForce, _maxJumpUnits * _shortJumpUnits, _maxJumpUnits);
                 velocity.y = Mathf.Sqrt(currentJumpForce * -2.0f * gravityController.gravity); 
 
                 isLongJumping = false;
@@ -211,9 +234,13 @@ public sealed class PlayerController : MonoBehaviour
     {
         #region movement calculation
 
-        if (stats.statsDict.TryGetValue("WalkSpeed", out Stat walkSpeed))
+        if (playerStats.GetStatsDict.TryGetValue("WalkSpeed", out Stat walkSpeed))
         {
             move = currentCrouchMultiplier * currentRunMultiplier * walkSpeed.GetValue() * (Vector3.Normalize(transform.right * x + transform.forward * z));
+        }
+        else
+        {
+            Debug.LogError("WalkSpeed stat not found in " + this);
         }
         //move = currentCrouchMultiplier * currentRunMultiplier * walkMultiplier * (Vector3.Normalize(transform.right * x + transform.forward * z));
         characterController.Move(move * Time.deltaTime);
@@ -226,6 +253,17 @@ public sealed class PlayerController : MonoBehaviour
         velocity.y = gravityController.UpdateGravity(velocity);
 
         characterController.Move(velocity * Time.deltaTime);
+    }
+
+    private void UpdateStats()
+    {
+        _health = playerStats.GetStatsDict["Health"].GetValue();
+        _walkSpeed = playerStats.GetStatsDict["WalkSpeed"].GetValue();
+        _runSpeed = playerStats.GetStatsDict["RunSpeed"].GetValue();
+        _crouchSpeed = playerStats.GetStatsDict["CrouchSpeed"].GetValue();
+        _maxJumpChargeTime = playerStats.GetStatsDict["MaxJumpChargeTime"].GetValue();
+        _maxJumpUnits = playerStats.GetStatsDict["MaxJumpUnits"].GetValue();
+        _shortJumpUnits = playerStats.GetStatsDict["ShortJumpUnits"].GetValue();
     }
 
     public void Die()

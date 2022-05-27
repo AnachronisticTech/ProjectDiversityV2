@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -142,6 +141,48 @@ namespace HelperNamespace
             EditorGUILayout.LabelField(labelText, style);
 
             GUILayout.Space(bottomSpace);
+        }
+
+        private static readonly List<DictGUI> dictGUI = new();
+        private class DictGUI
+        {
+            public string key;
+            public string value;
+
+            public DictGUI(string key, string value)
+            {
+                this.key = key;
+                this.value = value;
+            }
+        }
+        public static void ShowStatDictionaryInInspector(Dictionary<string, Stat> dict)
+        {
+            if (Application.isPlaying)
+            {
+                if (GUILayout.Button("Update Dictionary GUI"))
+                {
+                    dictGUI.Clear();
+
+                    foreach (KeyValuePair<string, Stat> statEntry in dict)
+                    {
+                        dictGUI.Add(new DictGUI(statEntry.Key, statEntry.Value.GetValue().ToString()));
+                    }
+                }
+
+                if (dictGUI.Count > 0)
+                {
+                    foreach (DictGUI dictGUIEntry in dictGUI)
+                    {
+                        EditorGUILayout.LabelField("Key:", dictGUIEntry.key);
+                        EditorGUILayout.LabelField("Value:", dictGUIEntry.value);
+                        Line();
+                    }
+                }
+            }
+            else
+            {
+                Label("Dictionary is only visible in Play mode", 14, textColor: new Color(255.0f, 140.0f, 0.0f), labelAlignment: TextAnchor.MiddleCenter);
+            }
         }
     }
 

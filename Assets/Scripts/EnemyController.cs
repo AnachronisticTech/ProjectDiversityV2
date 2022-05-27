@@ -13,7 +13,7 @@ using HelperNamespace;
 [RequireComponent(typeof(POV))]
 public sealed class EnemyController : MonoBehaviour
 {
-    private StatsScriptableObject stats;
+    //private Dictionary<string, Stat> enemyStats;
 
     [SerializeField, Range(0.5f, 2.5f)]
     private float interactRange = 1.0f;
@@ -25,11 +25,7 @@ public sealed class EnemyController : MonoBehaviour
     {
         pov = GetComponent<POV>();
 
-        stats = GetComponent<Stats>().stats;
-        foreach (KeyValuePair<string, Stat> statEntry in stats.statsDict)
-        {
-            Debug.Log(this.name + " has " + statEntry.Value.GetName() + " as a stat.");
-        }
+        //enemyStats = GetComponent<Stats>().GetStatsDict;
     }
 
     private void Update()
@@ -43,14 +39,14 @@ public sealed class EnemyController : MonoBehaviour
             float distance = Vector3.Distance(PlayerController.Instance.transform.position, transform.position);
             if (distance <= interactRange)
             {
-                if (stats.statsDict.TryGetValue("AttackDamage", out Stat attackDamage))
-                {
-                    Attack(attackDamage.GetValue());
-                }
-                else
-                {
-                    Debug.LogError("AttackDamage stat not found in " + this);
-                }
+                //if (enemyStats.TryGetValue("AttackDamage", out Stat attackDamage))
+                //{
+                //    Attack(attackDamage.GetValue());
+                //}
+                //else
+                //{
+                //    Debug.LogError("AttackDamage stat not found in " + this);
+                //}
             }
         }
     }
@@ -62,46 +58,45 @@ public sealed class EnemyController : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        if (stats.statsDict.TryGetValue("Health", out Stat health))
-        {
-            Debug.Log("Enemy " + this.name + " took " + amount + " damage.");
-        
-            if (health.DecreaseValue(amount))
-            {
-                Die();
-            }
-        }
-        else
-        {
-            Debug.LogError("AttackDamage stat not found in " + this);
-        }
+        //if (enemyStats.TryGetValue("Health", out Stat health))
+        //{
+        //    Debug.Log("Enemy " + this.name + " took " + amount + " damage.");
+        //
+        //    if (health.DecreaseValue(amount))
+        //    {
+        //        Die();
+        //    }
+        //}
+        //else
+        //{
+        //    Debug.LogError("AttackDamage stat not found in " + this);
+        //}
     }
 
     public void Attack(float amount)
     {
         currentAttackTimer += Time.deltaTime;
-        if (stats.statsDict.TryGetValue("AttackSpeed", out Stat attackSpeed))
-        {
-            if (currentAttackTimer >= attackSpeed.GetValue())
-            {
-                Debug.Log("fighting... Dealed: " + amount + " damage to -> " + pov.focusedObject);
-                
-                StatsScriptableObject targetStats = PlayerController.Instance.GetComponent<StatsScriptableObject>();
-                if (targetStats.statsDict.TryGetValue("Health", out Stat health))
-                {
-                    if (health.DecreaseValue(amount))
-                    {
-                        PlayerController.Instance.Die();
-                    }
-                }
-
-                currentAttackTimer = 0;
-            }
-        }
-        else
-        {
-            Debug.LogError("AttackSpeed stat not found in " + this);
-        }
+        //if (enemyStats.TryGetValue("AttackSpeed", out Stat attackSpeed))
+        //{
+        //    if (currentAttackTimer >= attackSpeed.GetValue())
+        //    {
+        //        Debug.Log("fighting... Dealed: " + amount + " damage to -> " + pov.focusedObject);
+        //
+        //        if (PlayerController.Instance.playerStats.TryGetValue("Health", out Stat health))
+        //        {
+        //            if (health.DecreaseValue(amount))
+        //            {
+        //                PlayerController.Instance.Die();
+        //            }
+        //        }
+        //
+        //        currentAttackTimer = 0;
+        //    }
+        //}
+        //else
+        //{
+        //    Debug.LogError("AttackSpeed stat not found in " + this);
+        //}
     }
 
     public void Die()

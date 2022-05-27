@@ -5,13 +5,12 @@ using UnityEngine;
 
 using HelperNamespace;
 
-[Obsolete("Use this navigation controller until V3 is done.")]
-
 /// <summary>
 ///     [What does this NPCNavigationControllerV2 do]
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
+[Obsolete("Use this navigation controller until V3 is done.")]
 public sealed class NPCNavigationControllerV2 : MonoBehaviour
 {
     public enum BehaviourMode

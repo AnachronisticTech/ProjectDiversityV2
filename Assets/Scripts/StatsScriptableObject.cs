@@ -10,16 +10,5 @@ using HelperNamespace;
 [CreateAssetMenu(fileName = "[EntityName]Stats", menuName = "Stats Scriptable Object")]
 public sealed class StatsScriptableObject : ScriptableObject
 {
-    [SerializeField]
-    private List<Stat> stats = new List<Stat>();
-
-    public Dictionary<string, Stat> statsDict = new Dictionary<string, Stat>();
-
-    private void OnEnable()
-    {
-        foreach (Stat stat in stats)
-        {
-            statsDict.Add(stat.GetName(), stat);
-        }
-    }
+    public List<Stat> statsList = new List<Stat>();
 }

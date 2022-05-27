@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using HelperNamespace;
+
 public sealed class EntitySpawner : MonoBehaviour
 {
     // TODO: convert this to a custom editor in order to control the different object types

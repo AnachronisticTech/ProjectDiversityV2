@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8be5a6fd2b0084c8e53b66b804c1de, type: 3}
   m_Name: Stats_Player
   m_EditorClassIdentifier: 
-  stats:
+  statsList:
   - _statName: Health
-    _value: 200
+    _value: 100
     _hasMinValue: 1
     _minValue: 0
     _hasMaxValue: 1
-    _maxValue: 200
+    _maxValue: 100
   - _statName: WalkSpeed
     _value: 5
     _hasMinValue: 1
@@ -52,12 +52,6 @@ MonoBehaviour:
   - _statName: ShortJumpUnits
     _value: 0.5
     _hasMinValue: 1
-    _minValue: 0.25
+    _minValue: 0.1
     _hasMaxValue: 1
-    _maxValue: 1
-  - _statName: AttackDamage
-    _value: 10
-    _hasMinValue: 1
-    _minValue: 0
-    _hasMaxValue: 0
     _maxValue: 1
