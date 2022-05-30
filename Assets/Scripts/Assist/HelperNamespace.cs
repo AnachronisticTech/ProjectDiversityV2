@@ -2,6 +2,36 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+public class LabelData
+{
+    private string      _labelText = "";
+    private int         _fontSize = 13;
+    private GUIStyle    _guiStyle = null;
+    private FontStyle   _fontStyle = FontStyle.Normal;
+    private Color?      _textColor = null;
+    private bool        _wordWrap = true;
+    private bool        _supportHTML = false;
+
+    public LabelData(string labelText, int fontSize = 13, GUIStyle guiStyle = null, FontStyle fontStyle = FontStyle.Normal, Color? textColor = null, bool wordWrap = true, bool supportHTML = false)
+    {
+        LabelText = labelText;
+        FontSize = fontSize;
+        GUIStyle = guiStyle;
+        FontStyle = fontStyle;
+        TextColor = textColor;
+        WordWrap = wordWrap;
+        SupportHTML = supportHTML;
+    }
+
+    public string LabelText { get => _labelText; set => _labelText = value; }
+    public int FontSize { get => _fontSize; set => _fontSize = value; }
+    public GUIStyle GUIStyle { get => _guiStyle; set => _guiStyle = value; }
+    public FontStyle FontStyle { get => _fontStyle; set => _fontStyle = value; }
+    public Color? TextColor { get => _textColor; set => _textColor = value; }
+    public bool WordWrap { get => _wordWrap; set => _wordWrap = value; }
+    public bool SupportHTML { get => _supportHTML; set => _supportHTML = value; }
+}
+
 namespace HelperNamespace
 {
     public static class EditorTools
@@ -139,6 +169,31 @@ namespace HelperNamespace
             style.normal.textColor = textColor ?? new Color(0.8f, 0.8f, 0.8f, 1.0f);
 
             EditorGUILayout.LabelField(labelText, style);
+
+            GUILayout.Space(bottomSpace);
+        }
+        public static void Label(float topSpace = 5.0f, float bottomSpace = 5.0f, params LabelData[] labelData)
+        {
+            GUILayout.Space(topSpace);
+
+            EditorGUILayout.BeginHorizontal(GUILayout.MaxWidth(140.0f));
+            for (int i = 0; i < labelData.Length; i++)
+            {
+                if (labelData[i].GUIStyle == null)
+                    labelData[i].GUIStyle = GUIStyle.none;
+
+                GUIStyle style = new(labelData[i].GUIStyle)
+                {
+                    fontSize = labelData[i].FontSize,
+                    wordWrap = labelData[i].WordWrap,
+                    richText = labelData[i].SupportHTML,
+                    fontStyle = labelData[i].FontStyle,
+                };
+                style.normal.textColor = labelData[i].TextColor ?? new Color(0.8f, 0.8f, 0.8f, 1.0f);
+
+                EditorGUILayout.LabelField(labelData[i].LabelText, style);
+            }
+            EditorGUILayout.EndHorizontal();
 
             GUILayout.Space(bottomSpace);
         }

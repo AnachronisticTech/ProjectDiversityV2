@@ -11,7 +11,7 @@ using HelperNamespace;
 public class Stat
 {
     [SerializeField]
-    private string _statName = "New Stat";
+    private string _statName = "New stat";
 
     [SerializeField]
     private float _value = 0.0f;

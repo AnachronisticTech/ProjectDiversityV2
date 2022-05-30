@@ -44,11 +44,11 @@ MonoBehaviour:
     _hasMaxValue: 1
     _maxValue: 2
   - _statName: MaxJumpUnits
-    _value: 0.75
+    _value: 1
     _hasMinValue: 1
     _minValue: 0.1
     _hasMaxValue: 1
-    _maxValue: 2
+    _maxValue: 3
   - _statName: ShortJumpUnits
     _value: 0.5
     _hasMinValue: 1

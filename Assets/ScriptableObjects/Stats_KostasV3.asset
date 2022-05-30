@@ -12,34 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d8be5a6fd2b0084c8e53b66b804c1de, type: 3}
   m_Name: Stats_KostasV3
   m_EditorClassIdentifier: 
-  stats:
-  - _statName: Health
-    _value: 100
-    _hasMinValue: 1
+  statsList:
+  - _statName: 
+    _value: 0
+    _hasMinValue: 0
     _minValue: 0
-    _hasMaxValue: 1
-    _maxValue: 100
-  - _statName: MoveSpeed
-    _value: 3
-    _hasMinValue: 1
-    _minValue: 0.1
-    _hasMaxValue: 0
-    _maxValue: 0
-  - _statName: JumpUnits
-    _value: 0.75
-    _hasMinValue: 1
-    _minValue: 0.1
-    _hasMaxValue: 1
-    _maxValue: 2
-  - _statName: AttackDamage
-    _value: 5
-    _hasMinValue: 1
-    _minValue: 0
-    _hasMaxValue: 0
-    _maxValue: 0
-  - _statName: AttackSpeed
-    _value: 2
-    _hasMinValue: 1
-    _minValue: 0.1
     _hasMaxValue: 0
     _maxValue: 0

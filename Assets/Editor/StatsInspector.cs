@@ -24,6 +24,6 @@ public sealed class StatsInspector : Editor
 
         EditorTools.Line();
 
-        EditorTools.ShowStatDictionaryInInspector(root.GetStatsDict);
+        EditorTools.ShowStatDictionaryInInspector(root.statsDict);
     }
 }

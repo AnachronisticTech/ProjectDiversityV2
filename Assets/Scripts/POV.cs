@@ -31,8 +31,8 @@ public sealed class POV : MonoBehaviour
     private float scanTimer;
     private Mesh lineOfSightMesh;
 
-    [HideInInspector, Range(1, 10)]
-    public byte scansPerSeconds = 5;
+    [HideInInspector, Range(0.05f, 10.0f)]
+    public float scansPerSeconds = 0.5f;
     [HideInInspector]
     public List<GameObject> inSightObjects = new List<GameObject>();
     [HideInInspector]

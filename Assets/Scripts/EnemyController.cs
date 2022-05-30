@@ -13,10 +13,18 @@ using HelperNamespace;
 [RequireComponent(typeof(POV))]
 public sealed class EnemyController : MonoBehaviour
 {
+    // TODO: finish stats for enemies
+
     //private Dictionary<string, Stat> enemyStats;
 
+    private Stats enemyStats;
+
+    [SerializeField]
+    private Transform interactTranformPivot;
     [SerializeField, Range(0.5f, 2.5f)]
     private float interactRange = 1.0f;
+    [SerializeField]
+    private GameObject target;
 
     private float currentAttackTimer = 0.0f;
     private POV pov;
@@ -26,6 +34,11 @@ public sealed class EnemyController : MonoBehaviour
         pov = GetComponent<POV>();
 
         //enemyStats = GetComponent<Stats>().GetStatsDict;
+    }
+
+    private void FixedUpdate()
+    {
+        target = pov.focusedObject;
     }
 
     private void Update()
