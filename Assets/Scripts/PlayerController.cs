@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+///     [What does this PlayerController do]
+/// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
 [RequireComponent(typeof(Stats))]
 [RequireComponent(typeof(POV))]
-
-public sealed class PlayerController : MonoBehaviour
+public sealed class PlayerController : MonoBehaviour, IStats
 {
     public static PlayerController Instance { get; private set; }
 
@@ -17,14 +19,7 @@ public sealed class PlayerController : MonoBehaviour
     [HideInInspector, Range(0.5f, 10.0f)]
     public float secondsPerStatsUpdate = 2.0f;
     private float currentStatUpdateTimer = 0.0f;
-    private Stats playerStats;
-    private float _health;
-    private float _walkSpeed;
-    private float _runSpeed;
-    private float _crouchSpeed;
-    private float _maxJumpChargeTime;
-    private float _maxJumpUnits;
-    private float _shortJumpUnits;
+    public Stats playerStats;
 
     [Header("Interact Data")]
     public Transform interactTransformPivot;
@@ -121,6 +116,7 @@ public sealed class PlayerController : MonoBehaviour
         xz.y = Input.GetAxis("Vertical");
 
         // assign run multiplier while holding Run button
+        float _runSpeed = playerStats.statsDict[StatRepo.RunSpeed].GetValue();
         currentRunMultiplier = Input.GetButton("Run") ? _runSpeed : 1.0f;
 
         // assign the crouch speed while holding Crouch button
@@ -164,6 +160,7 @@ public sealed class PlayerController : MonoBehaviour
 
     private void UpdateMovements()
     {
+        float _walkSpeed = playerStats.statsDict[StatRepo.WalkSpeed].GetValue();
         move = currentCrouchMultiplier * currentRunMultiplier * _walkSpeed * (Vector3.Normalize(transform.right * GetXZ.x + transform.forward * GetXZ.y));
         characterController.Move(GetMove * Time.deltaTime);
     }
@@ -174,25 +171,23 @@ public sealed class PlayerController : MonoBehaviour
         characterController.Move(velocity * Time.deltaTime);
     }
 
-    private void UpdateStats()
-    {
-        Debug.Log("Updating stats");
-
-        _health = playerStats.statsDict[StatRepo.Stats.Health].GetValue();
-        _walkSpeed = playerStats.statsDict[StatRepo.Stats.WalkSpeed].GetValue();
-        _runSpeed = playerStats.statsDict[StatRepo.Stats.RunSpeed].GetValue();
-        _crouchSpeed = playerStats.statsDict[StatRepo.Stats.CrouchSpeed].GetValue();
-        _maxJumpChargeTime = playerStats.statsDict[StatRepo.Stats.MaxJumpChargeTime].GetValue();
-        _maxJumpUnits = playerStats.statsDict[StatRepo.Stats.MaxJumpUnits].GetValue();
-        _shortJumpUnits = playerStats.statsDict[StatRepo.Stats.ShortJumpUnits].GetValue();
-    }
-
     public void Die()
     {
         Debug.Log(name + " has died.");
 
         this.enabled = false;
         //Destroy(gameObject);
+    }
+    
+    public void UpdateStats()
+    {
+        Debug.Log("Updating " + name + " stats");
+
+        //_health = playerStats.statsDict[StatRepo.Health].GetValue();
+        _crouchSpeed = playerStats.statsDict[StatRepo.CrouchSpeed].GetValue();
+        _maxJumpChargeTime = playerStats.statsDict[StatRepo.MaxJumpChargeTime].GetValue();
+        _maxJumpUnits = playerStats.statsDict[StatRepo.MaxJumpUnits].GetValue();
+        _shortJumpUnits = playerStats.statsDict[StatRepo.ShortJumpUnits].GetValue();
     }
 
     private void OnDrawGizmos()

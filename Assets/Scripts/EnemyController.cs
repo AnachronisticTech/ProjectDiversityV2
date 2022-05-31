@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using HelperNamespace;
-
 /// <summary>
 ///     [What does this Enemy do]
 /// </summary>
@@ -11,29 +9,40 @@ using HelperNamespace;
 [RequireComponent(typeof(GravityController))]
 [RequireComponent(typeof(Stats))]
 [RequireComponent(typeof(POV))]
-public sealed class EnemyController : MonoBehaviour
+public sealed class EnemyController : MonoBehaviour, IStats
 {
-    // TODO: finish stats for enemies
+    [Header("Interact Data")]
+    public Transform interactTranformPivot;
+    [Range(0.5f, 2.5f)]
+    public float interactRange = 1.0f;
+    [HideInInspector]
+    public GameObject target;
 
-    //private Dictionary<string, Stat> enemyStats;
+    [HideInInspector, Range(0.5f, 10.0f)]
+    public float secondsPerStatsUpdate = 2.0f;
+    private float currentStatUpdateTimer = 0.0f;
+    public Stats enemyStats;
+    #region Stats
+    private float _health;
+    private float _walkSpeed;
+    private float _runSpeed;
+    private float _maxJumpUnits;
+    private float _attackSpeed;
+    private float _smallAttack;
+    #endregion
 
-    private Stats enemyStats;
-
-    [SerializeField]
-    private Transform interactTranformPivot;
-    [SerializeField, Range(0.5f, 2.5f)]
-    private float interactRange = 1.0f;
-    [SerializeField]
-    private GameObject target;
-
-    private float currentAttackTimer = 0.0f;
+    [HideInInspector]
+    public float currentAttackTimer = 0.0f;
     private POV pov;
 
     private void Start()
     {
+        enemyStats = GetComponent<Stats>();
+
         pov = GetComponent<POV>();
 
-        //enemyStats = GetComponent<Stats>().GetStatsDict;
+        if (interactTranformPivot == null)
+            interactTranformPivot = transform;
     }
 
     private void FixedUpdate()
@@ -52,15 +61,15 @@ public sealed class EnemyController : MonoBehaviour
             float distance = Vector3.Distance(PlayerController.Instance.transform.position, transform.position);
             if (distance <= interactRange)
             {
-                //if (enemyStats.TryGetValue("AttackDamage", out Stat attackDamage))
-                //{
-                //    Attack(attackDamage.GetValue());
-                //}
-                //else
-                //{
-                //    Debug.LogError("AttackDamage stat not found in " + this);
-                //}
+                Attack(_smallAttack);
             }
+        }
+
+        currentStatUpdateTimer += Time.deltaTime;
+        if (currentStatUpdateTimer >= secondsPerStatsUpdate)
+        {
+            UpdateStats();
+            currentStatUpdateTimer = 0.0f;
         }
     }
 
@@ -71,45 +80,39 @@ public sealed class EnemyController : MonoBehaviour
 
     public void TakeDamage(float amount)
     {
-        //if (enemyStats.TryGetValue("Health", out Stat health))
-        //{
-        //    Debug.Log("Enemy " + this.name + " took " + amount + " damage.");
-        //
-        //    if (health.DecreaseValue(amount))
-        //    {
-        //        Die();
-        //    }
-        //}
-        //else
-        //{
-        //    Debug.LogError("AttackDamage stat not found in " + this);
-        //}
+        Debug.Log("Enemy " + this.name + " took " + amount + " damage.");
+        if (enemyStats.statsDict[StatRepo.Health].DecreaseValue(amount))
+        {
+            Die();
+        }
     }
 
     public void Attack(float amount)
     {
         currentAttackTimer += Time.deltaTime;
-        //if (enemyStats.TryGetValue("AttackSpeed", out Stat attackSpeed))
-        //{
-        //    if (currentAttackTimer >= attackSpeed.GetValue())
-        //    {
-        //        Debug.Log("fighting... Dealed: " + amount + " damage to -> " + pov.focusedObject);
-        //
-        //        if (PlayerController.Instance.playerStats.TryGetValue("Health", out Stat health))
-        //        {
-        //            if (health.DecreaseValue(amount))
-        //            {
-        //                PlayerController.Instance.Die();
-        //            }
-        //        }
-        //
-        //        currentAttackTimer = 0;
-        //    }
-        //}
-        //else
-        //{
-        //    Debug.LogError("AttackSpeed stat not found in " + this);
-        //}
+        if (currentAttackTimer >= enemyStats.statsDict[StatRepo.AttackSpeed].GetValue())
+        {
+            Debug.Log("fighting... Dealed: " + amount + " damage to -> " + target);
+
+            if (target.GetComponent<PlayerController>().playerStats.statsDict[StatRepo.Health].DecreaseValue(amount))
+            {
+                PlayerController.Instance.Die();
+            }
+        
+            currentAttackTimer = 0;
+        }
+    }
+
+    public void UpdateStats()
+    {
+        Debug.Log("Updating " + name + " stats");
+
+        _health = enemyStats.statsDict[StatRepo.Health].GetValue();
+        _walkSpeed = enemyStats.statsDict[StatRepo.WalkSpeed].GetValue();
+        _runSpeed = enemyStats.statsDict[StatRepo.RunSpeed].GetValue();
+        _maxJumpUnits = enemyStats.statsDict[StatRepo.MaxJumpUnits].GetValue();
+        _attackSpeed = enemyStats.statsDict[StatRepo.AttackSpeed].GetValue();
+        _smallAttack = enemyStats.statsDict[StatRepo.SmallAttack].GetValue();
     }
 
     public void Die()
@@ -123,7 +126,10 @@ public sealed class EnemyController : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, interactRange);
+        if (interactTranformPivot != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(transform.position, interactRange);
+        }
     }
 }

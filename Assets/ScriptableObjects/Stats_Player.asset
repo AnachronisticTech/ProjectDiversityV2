@@ -13,43 +13,43 @@ MonoBehaviour:
   m_Name: Stats_Player
   m_EditorClassIdentifier: 
   statsList:
-  - _statName: Health
+  - _statName: 1
     _value: 100
     _hasMinValue: 1
     _minValue: 0
     _hasMaxValue: 1
     _maxValue: 100
-  - _statName: WalkSpeed
+  - _statName: 2
     _value: 5
     _hasMinValue: 1
     _minValue: 1
     _hasMaxValue: 1
     _maxValue: 10
-  - _statName: RunSpeed
+  - _statName: 3
     _value: 1.25
     _hasMinValue: 1
     _minValue: 1
     _hasMaxValue: 1
     _maxValue: 2
-  - _statName: CrouchSpeed
+  - _statName: 4
     _value: 0.3
     _hasMinValue: 1
     _minValue: 0.125
     _hasMaxValue: 1
     _maxValue: 1
-  - _statName: MaxJumpChargeTime
+  - _statName: 5
     _value: 0.5
     _hasMinValue: 1
     _minValue: 0.25
     _hasMaxValue: 1
     _maxValue: 2
-  - _statName: MaxJumpUnits
+  - _statName: 6
     _value: 1
     _hasMinValue: 1
     _minValue: 0.1
     _hasMaxValue: 1
     _maxValue: 3
-  - _statName: ShortJumpUnits
+  - _statName: 7
     _value: 0.5
     _hasMinValue: 1
     _minValue: 0.1

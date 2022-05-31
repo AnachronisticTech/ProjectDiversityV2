@@ -10,7 +10,7 @@ using HelperNamespace;
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
-[Obsolete("Use this navigation controller until V3 is done.")]
+//[Obsolete("Use this navigation controller until V3 is done.")]
 public sealed class NPCNavigationControllerV2 : MonoBehaviour
 {
     public enum BehaviourMode
