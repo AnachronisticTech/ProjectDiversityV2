@@ -29,7 +29,7 @@ public sealed class PortalController : MonoBehaviour
 
     private IEnumerator Teleport()
     {
-        playerController.DisableMovement = true;
+        playerController.disabled = true;
 
         transitionAnimator.SetTrigger("FadeIn");
         yield return new WaitForSeconds(1.0f);
@@ -39,6 +39,6 @@ public sealed class PortalController : MonoBehaviour
         transitionAnimator.SetTrigger("FadeOut");
         yield return new WaitForSeconds(1.0f);
 
-        playerController.DisableMovement = false;
+        playerController.disabled = false;
     }
 }

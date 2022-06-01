@@ -12,4 +12,9 @@ public enum StatTypes
     ShortJumpUnits,
     AttackSpeed,
     SmallAttack,
+    SmallAttackChance,
+    MediumAttack,
+    MediumAttackChance,
+    BigAttack,
+    BigAttackChance,
 }

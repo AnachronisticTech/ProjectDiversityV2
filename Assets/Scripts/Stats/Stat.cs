@@ -32,13 +32,13 @@ public sealed class Stat
         _statName = name;
         _value = value;
 
-        if (ValueCheck.IsFloatLessThan(minValue, float.MinValue))
+        if (Values.IsFloatLessThan(minValue, float.MinValue))
         {
             _hasMinValue = true;
         }
         _minValue = minValue;
 
-        if (ValueCheck.IsFloatMoreThan(maxValue, float.MaxValue))
+        if (Values.IsFloatMoreThan(maxValue, float.MaxValue))
         {
             _hasMaxValue = true;
         }
@@ -63,7 +63,7 @@ public sealed class Stat
     {
         _value += value;
 
-        if (ValueCheck.IsFloatMoreThan(_value, _maxValue))
+        if (Values.IsFloatMoreThan(_value, _maxValue))
         {
             _value = _maxValue;
 
@@ -76,7 +76,7 @@ public sealed class Stat
     {
         _value -= value;
 
-        if (ValueCheck.IsFloatLessThan(_value, _minValue))
+        if (Values.IsFloatLessThan(_value, _minValue))
         {
             _value = _minValue;
 

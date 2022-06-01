@@ -241,7 +241,7 @@ namespace HelperNamespace
         }
     }
 
-    public static class SortingTools
+    public static class References
     {
         public static GameObject GetNearestGameObject(Transform origin, List<GameObject> listOfObjects)
         {
@@ -264,7 +264,7 @@ namespace HelperNamespace
         }
     }
     
-    public static class ValueCheck
+    public static class Values
     {
         public static bool IsFloatLessThan(float value1, float value2, float precision = 0.005f)
         {

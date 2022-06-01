@@ -13,7 +13,6 @@ public sealed class PlayerControllerInspector : Editor
 {
     PlayerController root;
 
-    SerializedProperty secondsPerStatsUpdate;
     SerializedProperty playerTarget;
 
     bool showPlayerControllerDebugData = false;
@@ -26,7 +25,6 @@ public sealed class PlayerControllerInspector : Editor
     {
         root = (PlayerController)target;
 
-        secondsPerStatsUpdate = serializedObject.FindProperty(nameof(root.secondsPerStatsUpdate));
         playerTarget = serializedObject.FindProperty(nameof(root.target));
     }
 
@@ -39,13 +37,9 @@ public sealed class PlayerControllerInspector : Editor
         EditorTools.Line();
 
         EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-        showPlayerControllerDebugData = GUILayout.Toggle(showPlayerControllerDebugData, new GUIContent("Show Player controller debug data"));
+        showPlayerControllerDebugData = GUILayout.Toggle(showPlayerControllerDebugData, new GUIContent("Show " + root.name + " controller debug data"));
         if (showPlayerControllerDebugData)
         {
-            EditorTools.Line();
-
-            EditorGUILayout.PropertyField(secondsPerStatsUpdate);
-
             EditorTools.Line();
 
             EditorGUILayout.PropertyField(playerTarget);
@@ -54,7 +48,7 @@ public sealed class PlayerControllerInspector : Editor
         
             EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 
-            if (root.DisableMovement)
+            if (root.disabled)
             {
                 EditorTools.Label(5.0f, 5.0f, playerInputsTitleLabel, playerInputsDisabledStateLabel);
                 GUI.enabled = false;
@@ -67,13 +61,13 @@ public sealed class PlayerControllerInspector : Editor
 
             EditorTools.Line();
 
-            EditorGUILayout.Vector2Field("Inputs", root.GetXZ);
-            EditorGUILayout.Vector3Field("Move forces", root.GetMove);
+            EditorGUILayout.Vector2Field("Inputs", root.XZ);
+            EditorGUILayout.Vector3Field("Move forces", root.Move);
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("Player state");
             string playerState = "";
-            if (root.GetIfCrouching)
+            if (root.IsCrouching)
             {
                 playerState += "Crouching and ";
             }
@@ -81,7 +75,7 @@ public sealed class PlayerControllerInspector : Editor
             {
                 playerState += "Standing and ";
             }
-            if (root.GetIfIsLongJumping)
+            if (root.IsLongJumping)
             {
                 playerState += "jumping";
             }

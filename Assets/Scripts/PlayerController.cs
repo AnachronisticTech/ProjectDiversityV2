@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: Update stats every time there is an update on the equipment that affects them rather than updating them on every click.
+
 /// <summary>
 ///     [What does this PlayerController do]
 /// </summary>
@@ -9,43 +11,41 @@ using UnityEngine;
 [RequireComponent(typeof(GravityController))]
 [RequireComponent(typeof(Stats))]
 [RequireComponent(typeof(POV))]
-public sealed class PlayerController : MonoBehaviour, IStats
+public sealed class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
 
     private CharacterController characterController;
     private GravityController gravityController;
     
-    [HideInInspector, Range(0.5f, 10.0f)]
-    public float secondsPerStatsUpdate = 2.0f;
-    private float currentStatUpdateTimer = 0.0f;
-    public Stats playerStats;
+    public Stats PlayerStats { get; private set; }
 
     [Header("Interact Data")]
-    public Transform interactTransformPivot;
+    public Transform interactTransformPivot = null;
     [Range(0.5f, 2.5f)]
     public float interactRange = 1.0f;
     [HideInInspector]
-    public GameObject target;
+    public GameObject target = null;
 
     private POV pov;
     private RaycastHit hit;
 
-    private bool disabled = false;
-    public bool DisableMovement { get => disabled;  set => disabled = value; }
+    [HideInInspector]
+    public bool disabled = false;
 
-    private Vector2 xz;
-    public Vector2 GetXZ { get => xz; }
-    private Vector3 velocity;
-    private Vector3 move;
-    public Vector3 GetMove { get => move; }
-    private float currentRunMultiplier;
-    private float currentCrouchMultiplier;
-    private bool isCrouching = false;
-    public bool GetIfCrouching { get => isCrouching; }
-    private bool isLongJumping = false;
-    public bool GetIfIsLongJumping { get => isLongJumping; }
-    private float currentJumpForce;
+    public Vector2 XZ { get; private set; }
+    private Vector3 velocity = Vector3.zero;
+    public Vector3 Move { get; private set; }
+
+    private const float _defaultMultiplier = 1.0f;
+    
+    public bool IsCrouching { get; private set; }
+    public bool IsLongJumping { get; private set; }
+    
+    private float currentRunMultiplier = _defaultMultiplier;
+    private float currentCrouchMultiplier = _defaultMultiplier;
+    private float currentJumpForce = _defaultMultiplier;
+    private float _maxJumpChargeTime = _defaultMultiplier;
 
     private void Awake()
     {
@@ -66,7 +66,7 @@ public sealed class PlayerController : MonoBehaviour, IStats
         characterController = GetComponent<CharacterController>();
         gravityController = GetComponent<GravityController>();
 
-        playerStats = GetComponent<Stats>();
+        PlayerStats = GetComponent<Stats>();
 
         pov = GetComponent<POV>();
 
@@ -87,13 +87,6 @@ public sealed class PlayerController : MonoBehaviour, IStats
             UpdateMovements();
             UpdateGravity();
         }
-
-        currentStatUpdateTimer += Time.deltaTime;
-        if (currentStatUpdateTimer >= secondsPerStatsUpdate)
-        {
-            UpdateStats();
-            currentStatUpdateTimer = 0.0f;
-        }
     }
 
     private void UpdateInputs()
@@ -112,23 +105,22 @@ public sealed class PlayerController : MonoBehaviour, IStats
         }
 
         // direction inputs
-        xz.x = Input.GetAxis("Horizontal");
-        xz.y = Input.GetAxis("Vertical");
+        XZ = new(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
         // assign run multiplier while holding Run button
-        float _runSpeed = playerStats.statsDict[StatRepo.RunSpeed].GetValue();
-        currentRunMultiplier = Input.GetButton("Run") ? _runSpeed : 1.0f;
+        float _runSpeed = PlayerStats.statsDict[StatRepo.RunSpeed].GetValue();
+        currentRunMultiplier = Input.GetButton("Run") ? _runSpeed : _defaultMultiplier;
 
         // assign the crouch speed while holding Crouch button
         if (Input.GetButtonDown("Crouch") && gravityController.GetIsGrounded)
         {
-            isCrouching = true;
+            IsCrouching = true;
         }
         else if (Input.GetButtonUp("Crouch"))
         {
-            isCrouching = false;
+            IsCrouching = false;
         }
-        currentCrouchMultiplier = GetIfCrouching ? _crouchSpeed : 1.0f;
+        currentCrouchMultiplier = IsCrouching ? PlayerStats.statsDict[StatRepo.CrouchSpeed].GetValue() : _defaultMultiplier;
 
         // if player is grounded then he can jump
         if (gravityController.GetIsGrounded)
@@ -136,11 +128,12 @@ public sealed class PlayerController : MonoBehaviour, IStats
             // when player initiates a jump then long jump calculations start
             if (Input.GetButtonDown("Jump"))
             {
-                isLongJumping = true;
+                IsLongJumping = true;
+                _maxJumpChargeTime = PlayerStats.statsDict[StatRepo.MaxJumpChargeTime].GetValue();
             }
 
             // adjusts the amount of long jump the player applies to jump 
-            if (GetIfIsLongJumping && GetIfCrouching)
+            if (IsLongJumping && IsCrouching)
             {
                 currentJumpForce += Time.deltaTime * _maxJumpChargeTime;
             }
@@ -148,11 +141,16 @@ public sealed class PlayerController : MonoBehaviour, IStats
             // when player stops jumping then all calculations for long jump are applied 
             if (Input.GetButtonUp("Jump"))
             {
-                currentJumpForce = Mathf.Clamp(currentJumpForce, _maxJumpUnits * _shortJumpUnits, _maxJumpUnits);
+                float _maxJumpUnits = PlayerStats.statsDict[StatRepo.MaxJumpUnits].GetValue();
+                float _shortJumpUnits = PlayerStats.statsDict[StatRepo.ShortJumpUnits].GetValue();
+
+                currentJumpForce = Mathf.Clamp(currentJumpForce, 
+                                               _maxJumpUnits * _shortJumpUnits, 
+                                               _maxJumpUnits);
                 velocity.y = Mathf.Sqrt(currentJumpForce * -2.0f * gravityController.gravity); 
 
                 // reset jump values/states
-                isLongJumping = false;
+                IsLongJumping = false;
                 currentJumpForce = 0.0f;
             }
         }
@@ -160,9 +158,10 @@ public sealed class PlayerController : MonoBehaviour, IStats
 
     private void UpdateMovements()
     {
-        float _walkSpeed = playerStats.statsDict[StatRepo.WalkSpeed].GetValue();
-        move = currentCrouchMultiplier * currentRunMultiplier * _walkSpeed * (Vector3.Normalize(transform.right * GetXZ.x + transform.forward * GetXZ.y));
-        characterController.Move(GetMove * Time.deltaTime);
+        float _walkSpeed = PlayerStats.statsDict[StatRepo.WalkSpeed].GetValue();
+
+        Move = currentCrouchMultiplier * currentRunMultiplier * _walkSpeed * (Vector3.Normalize(transform.right * XZ.x + transform.forward * XZ.y));
+        characterController.Move(Move * Time.deltaTime);
     }
 
     private void UpdateGravity()
@@ -175,19 +174,9 @@ public sealed class PlayerController : MonoBehaviour, IStats
     {
         Debug.Log(name + " has died.");
 
-        this.enabled = false;
+        gameObject.SetActive(false);
+        //this.enabled = false;
         //Destroy(gameObject);
-    }
-    
-    public void UpdateStats()
-    {
-        Debug.Log("Updating " + name + " stats");
-
-        //_health = playerStats.statsDict[StatRepo.Health].GetValue();
-        _crouchSpeed = playerStats.statsDict[StatRepo.CrouchSpeed].GetValue();
-        _maxJumpChargeTime = playerStats.statsDict[StatRepo.MaxJumpChargeTime].GetValue();
-        _maxJumpUnits = playerStats.statsDict[StatRepo.MaxJumpUnits].GetValue();
-        _shortJumpUnits = playerStats.statsDict[StatRepo.ShortJumpUnits].GetValue();
     }
 
     private void OnDrawGizmos()

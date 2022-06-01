@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using HelperNamespace;
+
+// TODO: Update stats every time there is an update on the equipment that affects them rather than updating them on every click.
+
 /// <summary>
 ///     [What does this Enemy do]
 /// </summary>
@@ -9,35 +13,31 @@ using UnityEngine;
 [RequireComponent(typeof(GravityController))]
 [RequireComponent(typeof(Stats))]
 [RequireComponent(typeof(POV))]
-public sealed class EnemyController : MonoBehaviour, IStats
+public sealed class EnemyController : MonoBehaviour
 {
+    public Stats EnemyStats { get; private set; }
+
     [Header("Interact Data")]
     public Transform interactTranformPivot;
     [Range(0.5f, 2.5f)]
     public float interactRange = 1.0f;
     [HideInInspector]
-    public GameObject target;
-
-    [HideInInspector, Range(0.5f, 10.0f)]
-    public float secondsPerStatsUpdate = 2.0f;
-    private float currentStatUpdateTimer = 0.0f;
-    public Stats enemyStats;
-    #region Stats
-    private float _health;
-    private float _walkSpeed;
-    private float _runSpeed;
-    private float _maxJumpUnits;
-    private float _attackSpeed;
-    private float _smallAttack;
-    #endregion
+    public GameObject target = null;
+    [HideInInspector]
+    public GameObject cachedTarget = null;
+    [HideInInspector]
+    public PlayerController targetController = null;
 
     [HideInInspector]
     public float currentAttackTimer = 0.0f;
+    [HideInInspector, Range(0.0f,100.0f)]
+    public float attackTypeChance = 0.0f;
+
     private POV pov;
 
     private void Start()
     {
-        enemyStats = GetComponent<Stats>();
+        EnemyStats = GetComponent<Stats>();
 
         pov = GetComponent<POV>();
 
@@ -48,28 +48,35 @@ public sealed class EnemyController : MonoBehaviour, IStats
     private void FixedUpdate()
     {
         target = pov.focusedObject;
+        if (target != cachedTarget)
+        {
+            cachedTarget = target;
+
+            if (target != null)
+            {
+                if (target.TryGetComponent(out PlayerController playerController))
+                    targetController = playerController;
+            }
+            else
+            {
+                targetController = null;
+            }
+        }
     }
 
     private void Update()
     {
-        if (pov.focusedObject == null)
+        if (target == null)
         {
             Idle();
         }
         else 
         {
-            float distance = Vector3.Distance(PlayerController.Instance.transform.position, transform.position);
+            float distance = Vector3.Distance(target.transform.position, transform.position);
             if (distance <= interactRange)
             {
-                Attack(_smallAttack);
+                Attack();
             }
-        }
-
-        currentStatUpdateTimer += Time.deltaTime;
-        if (currentStatUpdateTimer >= secondsPerStatsUpdate)
-        {
-            UpdateStats();
-            currentStatUpdateTimer = 0.0f;
         }
     }
 
@@ -81,38 +88,35 @@ public sealed class EnemyController : MonoBehaviour, IStats
     public void TakeDamage(float amount)
     {
         Debug.Log("Enemy " + this.name + " took " + amount + " damage.");
-        if (enemyStats.statsDict[StatRepo.Health].DecreaseValue(amount))
+        if (EnemyStats.statsDict[StatRepo.Health].DecreaseValue(amount))
         {
             Die();
         }
     }
 
-    public void Attack(float amount)
+    public void Attack()
     {
         currentAttackTimer += Time.deltaTime;
-        if (currentAttackTimer >= enemyStats.statsDict[StatRepo.AttackSpeed].GetValue())
+        if (currentAttackTimer >= EnemyStats.statsDict[StatRepo.AttackSpeed].GetValue())
         {
-            Debug.Log("fighting... Dealed: " + amount + " damage to -> " + target);
+            float amount;
+            attackTypeChance = Random.Range(0.0f, 100.0f);
+            if (attackTypeChance >= (EnemyStats.statsDict[StatRepo.BigAttackChance].GetMaxValue() - EnemyStats.statsDict[StatRepo.BigAttackChance].GetValue()))
+                amount = EnemyStats.statsDict[StatRepo.BigAttack].GetValue();
+            else if (attackTypeChance >= (EnemyStats.statsDict[StatRepo.MediumAttackChance].GetMaxValue() - EnemyStats.statsDict[StatRepo.MediumAttackChance].GetValue()))
+                amount = EnemyStats.statsDict[StatRepo.MediumAttack].GetValue();
+            else
+                amount = EnemyStats.statsDict[StatRepo.SmallAttack].GetValue();
 
-            if (target.GetComponent<PlayerController>().playerStats.statsDict[StatRepo.Health].DecreaseValue(amount))
+            Debug.Log(name + " dealed " + amount + " damage to " + target + " with current health of " + targetController.PlayerStats.statsDict[StatRepo.Health].GetValue());
+
+            if (targetController.PlayerStats.statsDict[StatRepo.Health].DecreaseValue(amount))
             {
-                PlayerController.Instance.Die();
+                targetController.Die();
             }
-        
-            currentAttackTimer = 0;
+            
+            currentAttackTimer = 0.0f;
         }
-    }
-
-    public void UpdateStats()
-    {
-        Debug.Log("Updating " + name + " stats");
-
-        _health = enemyStats.statsDict[StatRepo.Health].GetValue();
-        _walkSpeed = enemyStats.statsDict[StatRepo.WalkSpeed].GetValue();
-        _runSpeed = enemyStats.statsDict[StatRepo.RunSpeed].GetValue();
-        _maxJumpUnits = enemyStats.statsDict[StatRepo.MaxJumpUnits].GetValue();
-        _attackSpeed = enemyStats.statsDict[StatRepo.AttackSpeed].GetValue();
-        _smallAttack = enemyStats.statsDict[StatRepo.SmallAttack].GetValue();
     }
 
     public void Die()
@@ -129,7 +133,7 @@ public sealed class EnemyController : MonoBehaviour, IStats
         if (interactTranformPivot != null)
         {
             Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, interactRange);
+            Gizmos.DrawWireSphere(interactTranformPivot.position, interactRange);
         }
     }
 }

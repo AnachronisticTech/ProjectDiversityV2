@@ -13,13 +13,44 @@ public sealed class EnemyControllerInspector : Editor
 {
     EnemyController root;
 
-    private void Start()
+    SerializedProperty enemyTarget;
+    SerializedProperty currentAttackTimer;
+    SerializedProperty attackTypeChance;
+
+    bool showEnemyControllerDebugData = false;
+
+    private void OnEnable()
     {
-        
+        root = (EnemyController)target;
+
+        enemyTarget = serializedObject.FindProperty(nameof(root.target));
+        currentAttackTimer = serializedObject.FindProperty(nameof(currentAttackTimer));
+        attackTypeChance = serializedObject.FindProperty(nameof(attackTypeChance));
     }
 
-    private void Update()
+    public override void OnInspectorGUI()
     {
-        
+        serializedObject.Update();
+
+        base.OnInspectorGUI();
+
+        EditorTools.Line();
+
+        EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+        showEnemyControllerDebugData = GUILayout.Toggle(showEnemyControllerDebugData, new GUIContent("Show " + root.name + " controller debug data"));
+        if (showEnemyControllerDebugData)
+        {
+            EditorTools.Line();
+
+            EditorGUILayout.PropertyField(enemyTarget);
+
+            EditorTools.Line();
+
+            EditorGUILayout.PropertyField(currentAttackTimer);
+            EditorGUILayout.PropertyField(attackTypeChance);
+        }
+        EditorGUILayout.EndVertical();
+
+        serializedObject.ApplyModifiedProperties();
     }
 }

@@ -79,7 +79,7 @@ public sealed class POV : MonoBehaviour
                     inSightObjects.Add(obj);
                 }
             }
-            focusedObject = SortingTools.GetNearestGameObject(pivot, inSightObjects);
+            focusedObject = References.GetNearestGameObject(pivot, inSightObjects);
         }
     }
 
