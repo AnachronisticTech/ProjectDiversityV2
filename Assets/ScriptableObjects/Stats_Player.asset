@@ -14,44 +14,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   statsList:
   - _statName: 0
+    _value: 8.8
+    _hasMinValue: 1
+    _minValue: 5
+    _hasMaxValue: 1
+    _maxValue: 20
+    _showHideStat: 1
+  - _statName: 0
     _value: 0
-    _hasMinValue: 0
+    _hasMinValue: 1
     _minValue: 0
-    _hasMaxValue: 0
+    _hasMaxValue: 1
     _maxValue: 0
+    _showHideStat: 0
   - _statName: 0
     _value: 0
     _hasMinValue: 0
     _minValue: 0
     _hasMaxValue: 0
     _maxValue: 0
+    _showHideStat: 0
   - _statName: 0
     _value: 0
     _hasMinValue: 0
     _minValue: 0
     _hasMaxValue: 0
     _maxValue: 0
+    _showHideStat: 0
   - _statName: 0
     _value: 0
     _hasMinValue: 0
     _minValue: 0
     _hasMaxValue: 0
     _maxValue: 0
+    _showHideStat: 0
   - _statName: 0
-    _value: 0
+    _value: 3.93
     _hasMinValue: 0
     _minValue: 0
     _hasMaxValue: 0
     _maxValue: 0
-  - _statName: 0
-    _value: 0
-    _hasMinValue: 0
-    _minValue: 0
-    _hasMaxValue: 0
-    _maxValue: 0
+    _showHideStat: 1
   - _statName: 8
-    _value: 0
+    _value: 69
     _hasMinValue: 0
     _minValue: 0
     _hasMaxValue: 0
     _maxValue: 0
+    _showHideStat: 0

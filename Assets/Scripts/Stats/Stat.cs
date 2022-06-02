@@ -27,6 +27,8 @@ public sealed class Stat
     //[SerializeField, ConditionalHide(nameof(_hasMaxValue), true)]
     public float _maxValue = float.MaxValue;
 
+    public bool _showHideStat = true;
+
     public Stat(StatTypes name, float value, float minValue = float.MinValue, float maxValue = float.MaxValue)
     {
         _statName = name;
