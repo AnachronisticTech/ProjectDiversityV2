@@ -11,21 +11,21 @@ using System;
 [System.Serializable]
 public sealed class Stat
 {
-    [SerializeField]
-    private StatTypes _statName = StatTypes.Unknown;
+    //[SerializeField]
+    public StatTypes _statName = StatTypes.Unknown;
 
-    [SerializeField]
-    private float _value = 0.0f;
+    //[SerializeField]
+    public float _value = 0.0f;
 
-    [SerializeField]
-    private bool _hasMinValue = false;
-    [SerializeField, ConditionalHide(nameof(_hasMinValue), true)]
-    private float _minValue = float.MinValue;
+    //[SerializeField]
+    public bool _hasMinValue = false;
+    //[SerializeField, ConditionalHide(nameof(_hasMinValue), true)]
+    public float _minValue = float.MinValue;
 
-    [SerializeField]
-    private bool _hasMaxValue = false;
-    [SerializeField, ConditionalHide(nameof(_hasMaxValue), true)]
-    private float _maxValue = float.MaxValue;
+    //[SerializeField]
+    public bool _hasMaxValue = false;
+    //[SerializeField, ConditionalHide(nameof(_hasMaxValue), true)]
+    public float _maxValue = float.MaxValue;
 
     public Stat(StatTypes name, float value, float minValue = float.MinValue, float maxValue = float.MaxValue)
     {
@@ -45,18 +45,18 @@ public sealed class Stat
         _maxValue = maxValue;
     }
 
-    public string GetName()
+    public string GetName
     {
-        return Enum.GetName(typeof(StatTypes), _statName);
+        get => Enum.GetName(typeof(StatTypes), _statName);
     }
 
     public void SetValue(float value)
     {
         _value = value;
     }
-    public float GetValue()
+    public float GetValue
     {
-        return _value;
+        get => _value;
     }
 
     public bool IncreaseValue(float value)
@@ -86,22 +86,22 @@ public sealed class Stat
         return false;
     }
 
-    public bool HasMaxValue()
+    public bool HasMaxValue
     {
-        return _hasMaxValue;
+        get => _hasMaxValue;
     }
-    public bool HasMinValue()
+    public bool HasMinValue
     {
-        return _hasMinValue;
+        get => _hasMinValue;
     }
 
-    public float GetMaxValue()
+    public float GetMaxValue
     {
-        return _hasMaxValue ? _maxValue : float.MaxValue;
+        get => _hasMaxValue ? _maxValue : float.MaxValue;
     }
-    public float GetMinValue()
+    public float GetMinValue
     {
-        return _hasMinValue ? _minValue : float.MinValue;
+        get => _hasMinValue ? _minValue : float.MinValue;
     }
 
     public void SetMaxValue(float value)

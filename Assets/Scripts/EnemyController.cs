@@ -11,11 +11,11 @@ using HelperNamespace;
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
-[RequireComponent(typeof(Stats))]
+[RequireComponent(typeof(StatsList))]
 [RequireComponent(typeof(POV))]
 public sealed class EnemyController : MonoBehaviour
 {
-    public Stats EnemyStats { get; private set; }
+    public StatsList EnemyStats { get; private set; }
 
     [Header("Interact Data")]
     public Transform interactTranformPivot;
@@ -23,10 +23,12 @@ public sealed class EnemyController : MonoBehaviour
     public float interactRange = 1.0f;
     [HideInInspector]
     public GameObject target = null;
+    private GameObject cachedTarget = null;
+
     [HideInInspector]
-    public GameObject cachedTarget = null;
+    public PlayerController playerController = null;
     [HideInInspector]
-    public PlayerController targetController = null;
+    public EnemyController enemyController = null;
 
     [HideInInspector]
     public float currentAttackTimer = 0.0f;
@@ -37,7 +39,7 @@ public sealed class EnemyController : MonoBehaviour
 
     private void Start()
     {
-        EnemyStats = GetComponent<Stats>();
+        EnemyStats = GetComponent<StatsList>();
 
         pov = GetComponent<POV>();
 
@@ -52,14 +54,17 @@ public sealed class EnemyController : MonoBehaviour
         {
             cachedTarget = target;
 
+            playerController = null;
+            enemyController = null;
+            
             if (target != null)
             {
+                Debug.Log("Fetching controller for Target: " + target);
+
                 if (target.TryGetComponent(out PlayerController playerController))
-                    targetController = playerController;
-            }
-            else
-            {
-                targetController = null;
+                    this.playerController = playerController;
+                if (target.TryGetComponent(out EnemyController enemyController))
+                    this.enemyController = enemyController;
             }
         }
     }
@@ -97,22 +102,34 @@ public sealed class EnemyController : MonoBehaviour
     public void Attack()
     {
         currentAttackTimer += Time.deltaTime;
-        if (currentAttackTimer >= EnemyStats.statsDict[StatRepo.AttackSpeed].GetValue())
+        if (currentAttackTimer >= EnemyStats.statsDict[StatRepo.AttackSpeed].GetValue)
         {
             float amount;
             attackTypeChance = Random.Range(0.0f, 100.0f);
-            if (attackTypeChance >= (EnemyStats.statsDict[StatRepo.BigAttackChance].GetMaxValue() - EnemyStats.statsDict[StatRepo.BigAttackChance].GetValue()))
-                amount = EnemyStats.statsDict[StatRepo.BigAttack].GetValue();
-            else if (attackTypeChance >= (EnemyStats.statsDict[StatRepo.MediumAttackChance].GetMaxValue() - EnemyStats.statsDict[StatRepo.MediumAttackChance].GetValue()))
-                amount = EnemyStats.statsDict[StatRepo.MediumAttack].GetValue();
+            if (attackTypeChance >= (EnemyStats.statsDict[StatRepo.BigAttackChance].GetMaxValue - EnemyStats.statsDict[StatRepo.BigAttackChance].GetValue))
+                amount = EnemyStats.statsDict[StatRepo.BigAttack].GetValue;
+            else if (attackTypeChance >= (EnemyStats.statsDict[StatRepo.MediumAttackChance].GetMaxValue - EnemyStats.statsDict[StatRepo.MediumAttackChance].GetValue))
+                amount = EnemyStats.statsDict[StatRepo.MediumAttack].GetValue;
             else
-                amount = EnemyStats.statsDict[StatRepo.SmallAttack].GetValue();
+                amount = EnemyStats.statsDict[StatRepo.SmallAttack].GetValue;
 
-            Debug.Log(name + " dealed " + amount + " damage to " + target + " with current health of " + targetController.PlayerStats.statsDict[StatRepo.Health].GetValue());
-
-            if (targetController.PlayerStats.statsDict[StatRepo.Health].DecreaseValue(amount))
+            if (playerController != null && enemyController == null)
             {
-                targetController.Die();
+                Debug.Log(name + " dealed " + amount + " damage to " + target + " with current health of " + playerController.PlayerStats.statsDict[StatRepo.Health].GetValue);
+
+                if (playerController.PlayerStats.statsDict[StatRepo.Health].DecreaseValue(amount))
+                    playerController.Die();
+            }
+            else if (playerController == null && enemyController != null)
+            {
+                Debug.Log(name + " dealed " + amount + " damage to " + target + " with current health of " + enemyController.EnemyStats.statsDict[StatRepo.Health].GetValue);
+
+                if (enemyController.EnemyStats.statsDict[StatRepo.Health].DecreaseValue(amount))
+                    enemyController.Die();
+            }
+            else
+            {
+                Debug.LogWarning(name + " failed to deal damage to " + target + ", target does not have a valid controller!");
             }
             
             currentAttackTimer = 0.0f;

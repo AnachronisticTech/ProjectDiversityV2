@@ -8,14 +8,14 @@ using HelperNamespace;
 /// <summary>
 ///     [What does this StatsInspector do]
 /// </summary>
-[CustomEditor(typeof(Stats)), CanEditMultipleObjects]
+[CustomEditor(typeof(StatsList)), CanEditMultipleObjects]
 public sealed class StatsInspector : Editor
 {
-    Stats root;
+    StatsList root;
 
     private void OnEnable()
     {
-        root = (Stats)target;
+        root = (StatsList)target;
     }
 
     public override void OnInspectorGUI()

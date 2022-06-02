@@ -9,7 +9,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
-[RequireComponent(typeof(Stats))]
+[RequireComponent(typeof(StatsList))]
 [RequireComponent(typeof(POV))]
 public sealed class PlayerController : MonoBehaviour
 {
@@ -18,15 +18,15 @@ public sealed class PlayerController : MonoBehaviour
     private CharacterController characterController;
     private GravityController gravityController;
     
-    public Stats PlayerStats { get; private set; }
-
+    public StatsList PlayerStats { get; private set; }
+    
     [Header("Interact Data")]
     public Transform interactTransformPivot = null;
     [Range(0.5f, 2.5f)]
     public float interactRange = 1.0f;
     [HideInInspector]
     public GameObject target = null;
-
+    
     private POV pov;
     private RaycastHit hit;
 
@@ -66,7 +66,7 @@ public sealed class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         gravityController = GetComponent<GravityController>();
 
-        PlayerStats = GetComponent<Stats>();
+        PlayerStats = GetComponent<StatsList>();
 
         pov = GetComponent<POV>();
 
@@ -108,7 +108,7 @@ public sealed class PlayerController : MonoBehaviour
         XZ = new(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
 
         // assign run multiplier while holding Run button
-        float _runSpeed = PlayerStats.statsDict[StatRepo.RunSpeed].GetValue();
+        float _runSpeed = PlayerStats.statsDict[StatRepo.RunSpeed].GetValue;
         currentRunMultiplier = Input.GetButton("Run") ? _runSpeed : _defaultMultiplier;
 
         // assign the crouch speed while holding Crouch button
@@ -120,7 +120,7 @@ public sealed class PlayerController : MonoBehaviour
         {
             IsCrouching = false;
         }
-        currentCrouchMultiplier = IsCrouching ? PlayerStats.statsDict[StatRepo.CrouchSpeed].GetValue() : _defaultMultiplier;
+        currentCrouchMultiplier = IsCrouching ? PlayerStats.statsDict[StatRepo.CrouchSpeed].GetValue : _defaultMultiplier;
 
         // if player is grounded then he can jump
         if (gravityController.GetIsGrounded)
@@ -129,7 +129,7 @@ public sealed class PlayerController : MonoBehaviour
             if (Input.GetButtonDown("Jump"))
             {
                 IsLongJumping = true;
-                _maxJumpChargeTime = PlayerStats.statsDict[StatRepo.MaxJumpChargeTime].GetValue();
+                _maxJumpChargeTime = PlayerStats.statsDict[StatRepo.MaxJumpChargeTime].GetValue;
             }
 
             // adjusts the amount of long jump the player applies to jump 
@@ -141,8 +141,8 @@ public sealed class PlayerController : MonoBehaviour
             // when player stops jumping then all calculations for long jump are applied 
             if (Input.GetButtonUp("Jump"))
             {
-                float _maxJumpUnits = PlayerStats.statsDict[StatRepo.MaxJumpUnits].GetValue();
-                float _shortJumpUnits = PlayerStats.statsDict[StatRepo.ShortJumpUnits].GetValue();
+                float _maxJumpUnits = PlayerStats.statsDict[StatRepo.MaxJumpUnits].GetValue;
+                float _shortJumpUnits = PlayerStats.statsDict[StatRepo.ShortJumpUnits].GetValue;
 
                 currentJumpForce = Mathf.Clamp(currentJumpForce, 
                                                _maxJumpUnits * _shortJumpUnits, 
@@ -158,7 +158,7 @@ public sealed class PlayerController : MonoBehaviour
 
     private void UpdateMovements()
     {
-        float _walkSpeed = PlayerStats.statsDict[StatRepo.WalkSpeed].GetValue();
+        float _walkSpeed = PlayerStats.statsDict[StatRepo.WalkSpeed].GetValue;
 
         Move = currentCrouchMultiplier * currentRunMultiplier * _walkSpeed * (Vector3.Normalize(transform.right * XZ.x + transform.forward * XZ.y));
         characterController.Move(Move * Time.deltaTime);

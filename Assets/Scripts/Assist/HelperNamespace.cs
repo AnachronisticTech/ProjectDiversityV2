@@ -220,7 +220,7 @@ namespace HelperNamespace
 
                     foreach (KeyValuePair<string, Stat> statEntry in dict)
                     {
-                        dictGUI.Add(new DictGUI(statEntry.Key, statEntry.Value.GetValue().ToString()));
+                        dictGUI.Add(new DictGUI(statEntry.Key, statEntry.Value.GetValue.ToString()));
                     }
                 }
 
@@ -238,6 +238,20 @@ namespace HelperNamespace
             {
                 Label("Dictionary is only visible in Play mode", 14, textColor: new Color(255.0f, 140.0f, 0.0f), labelAlignment: TextAnchor.MiddleCenter);
             }
+        }
+
+        public static Texture2D MakeTexture(Color color, int width = 1, int height = 1)
+        {
+            Color32[] pix = new Color32[width * height];
+
+            for (int i = 0; i < pix.Length; i++)
+                pix[i] = color;
+
+            Texture2D result = new(width, height);
+            result.SetPixels32(pix);
+            result.Apply();
+
+            return result;
         }
     }
 
@@ -274,6 +288,13 @@ namespace HelperNamespace
         public static bool IsFloatMoreThan(float value1, float value2, float precision = 0.005f)
         {
             return Mathf.Abs(value1 - value2) > precision;
+        }
+
+        public static List<T> SwapListElements<T>(List<T> list, int indexA, int indexB)
+        {
+            (list[indexB], list[indexA]) = (list[indexA], list[indexB]);
+
+            return list;
         }
     }
 }

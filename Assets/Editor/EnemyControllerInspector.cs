@@ -14,6 +14,8 @@ public sealed class EnemyControllerInspector : Editor
     EnemyController root;
 
     SerializedProperty enemyTarget;
+    SerializedProperty playerController;
+    SerializedProperty enemyController;
     SerializedProperty currentAttackTimer;
     SerializedProperty attackTypeChance;
 
@@ -24,8 +26,11 @@ public sealed class EnemyControllerInspector : Editor
         root = (EnemyController)target;
 
         enemyTarget = serializedObject.FindProperty(nameof(root.target));
-        currentAttackTimer = serializedObject.FindProperty(nameof(currentAttackTimer));
-        attackTypeChance = serializedObject.FindProperty(nameof(attackTypeChance));
+        playerController = serializedObject.FindProperty(nameof(root.playerController));
+        enemyController = serializedObject.FindProperty(nameof(root.enemyController));
+
+        currentAttackTimer = serializedObject.FindProperty(nameof(root.currentAttackTimer));
+        attackTypeChance = serializedObject.FindProperty(nameof(root.attackTypeChance));
     }
 
     public override void OnInspectorGUI()
@@ -43,6 +48,18 @@ public sealed class EnemyControllerInspector : Editor
             EditorTools.Line();
 
             EditorGUILayout.PropertyField(enemyTarget);
+            if (root.enemyController == null && root.playerController != null)
+            {
+                EditorGUILayout.PropertyField(playerController);
+            }
+            else if (root.enemyController != null && root.playerController == null)
+            {
+                EditorGUILayout.PropertyField(enemyController);
+            }
+            else
+            {
+                EditorTools.Label("Valid controller NOT found on Target.    ", textColor: Color.red, labelAlignment: TextAnchor.MiddleRight);
+            }
 
             EditorTools.Line();
 

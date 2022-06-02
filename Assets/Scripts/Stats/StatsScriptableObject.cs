@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using HelperNamespace;
 
 /// <summary>
 ///     [What does this StatsScriptableObject do]
@@ -10,5 +7,14 @@ using HelperNamespace;
 [CreateAssetMenu(fileName = "[EntityName]Stats", menuName = "Stats Scriptable Object")]
 public sealed class StatsScriptableObject : ScriptableObject
 {
-    public List<Stat> statsList = new List<Stat>();
+    [HideInInspector]
+    public List<Stat> statsList = new();
+
+    //private void OnValidate()
+    //{
+    //    foreach (Stat stat in statsList)
+    //    {
+    //        stat.SetValue(Mathf.Clamp(stat.GetValue, stat.GetMinValue, stat.GetMaxValue));
+    //    }
+    //}
 }
