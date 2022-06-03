@@ -19,45 +19,53 @@ MonoBehaviour:
     _minValue: 0
     _hasMaxValue: 1
     _maxValue: 100
+    _showHideStat: 1
   - _statName: 8
-    _value: 3
+    _value: 4
     _hasMinValue: 1
     _minValue: 0.5
     _hasMaxValue: 0
-    _maxValue: 0
+    _maxValue: 5
+    _showHideStat: 0
   - _statName: 10
     _value: 60
     _hasMinValue: 1
     _minValue: 0
     _hasMaxValue: 1
     _maxValue: 100
+    _showHideStat: 0
   - _statName: 9
     _value: 5
     _hasMinValue: 1
     _minValue: 1
     _hasMaxValue: 0
     _maxValue: 100
+    _showHideStat: 0
   - _statName: 12
     _value: 30
     _hasMinValue: 1
     _minValue: 0
     _hasMaxValue: 1
     _maxValue: 100
+    _showHideStat: 0
   - _statName: 11
     _value: 10
     _hasMinValue: 1
     _minValue: 2
     _hasMaxValue: 0
     _maxValue: 100
+    _showHideStat: 0
   - _statName: 14
     _value: 10
     _hasMinValue: 1
     _minValue: 0
     _hasMaxValue: 1
     _maxValue: 100
+    _showHideStat: 0
   - _statName: 13
     _value: 20
     _hasMinValue: 1
     _minValue: 4
     _hasMaxValue: 0
     _maxValue: 100
+    _showHideStat: 0

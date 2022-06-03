@@ -13,52 +13,52 @@ MonoBehaviour:
   m_Name: Stats_Player
   m_EditorClassIdentifier: 
   statsList:
-  - _statName: 0
-    _value: 8.8
-    _hasMinValue: 1
-    _minValue: 5
-    _hasMaxValue: 1
-    _maxValue: 20
-    _showHideStat: 1
-  - _statName: 0
-    _value: 0
+  - _statName: 1
+    _value: 100
     _hasMinValue: 1
     _minValue: 0
     _hasMaxValue: 1
-    _maxValue: 0
-    _showHideStat: 0
-  - _statName: 0
-    _value: 0
-    _hasMinValue: 0
-    _minValue: 0
-    _hasMaxValue: 0
-    _maxValue: 0
-    _showHideStat: 0
-  - _statName: 0
-    _value: 0
-    _hasMinValue: 0
-    _minValue: 0
-    _hasMaxValue: 0
-    _maxValue: 0
-    _showHideStat: 0
-  - _statName: 0
-    _value: 0
-    _hasMinValue: 0
-    _minValue: 0
-    _hasMaxValue: 0
-    _maxValue: 0
-    _showHideStat: 0
-  - _statName: 0
-    _value: 3.93
-    _hasMinValue: 0
-    _minValue: 0
-    _hasMaxValue: 0
-    _maxValue: 0
+    _maxValue: 500
     _showHideStat: 1
-  - _statName: 8
-    _value: 69
-    _hasMinValue: 0
-    _minValue: 0
+  - _statName: 2
+    _value: 3
+    _hasMinValue: 1
+    _minValue: 1
     _hasMaxValue: 0
-    _maxValue: 0
+    _maxValue: 3.4028235e+38
+    _showHideStat: 0
+  - _statName: 3
+    _value: 1.25
+    _hasMinValue: 1
+    _minValue: 1.1
+    _hasMaxValue: 0
+    _maxValue: 3.4028235e+38
+    _showHideStat: 0
+  - _statName: 4
+    _value: 0.5
+    _hasMinValue: 1
+    _minValue: 0.125
+    _hasMaxValue: 0
+    _maxValue: 3.4028235e+38
+    _showHideStat: 0
+  - _statName: 5
+    _value: 0.5
+    _hasMinValue: 1
+    _minValue: 0.25
+    _hasMaxValue: 1
+    _maxValue: 2
+    _showHideStat: 0
+  - _statName: 6
+    _value: 1
+    _hasMinValue: 1
+    _minValue: 0.1
+    _hasMaxValue: 1
+    _maxValue: 3
+    _showHideStat: 0
+  - _statName: 7
+    _value: 0.5
+    _hasMinValue: 1
+    _minValue: 0.1
+    _hasMaxValue: 1
+    _maxValue: 1
     _showHideStat: 0

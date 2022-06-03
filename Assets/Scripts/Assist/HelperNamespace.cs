@@ -284,7 +284,6 @@ namespace HelperNamespace
         {
             return Mathf.Abs(value1 - value2) < precision;
         }
-
         public static bool IsFloatMoreThan(float value1, float value2, float precision = 0.005f)
         {
             return Mathf.Abs(value1 - value2) > precision;
@@ -295,6 +294,25 @@ namespace HelperNamespace
             (list[indexB], list[indexA]) = (list[indexA], list[indexB]);
 
             return list;
+        }
+
+        public static int EnsureInRange(int value, int minValue = int.MinValue, int maxValue = int.MaxValue)
+        {
+            if (IsFloatLessThan(value, minValue) || IsFloatMoreThan(value, maxValue))
+            {
+                value = Mathf.Clamp(value, minValue, maxValue);
+            }
+
+            return value;
+        }
+        public static float EnsureInRange(float value, float minValue = float.MinValue, float maxValue = float.MaxValue)
+        {
+            if (IsFloatLessThan(value, minValue) || IsFloatMoreThan(value, maxValue))
+            {
+                value = Mathf.Clamp(value, minValue, maxValue);
+            }
+
+            return value;
         }
     }
 }
