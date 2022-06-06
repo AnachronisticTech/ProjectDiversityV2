@@ -15,7 +15,7 @@ public sealed class StatsInspector : Editor
 
     private void OnEnable()
     {
-        root = (StatsList)target;
+        root = target as StatsList;
     }
 
     public override void OnInspectorGUI()

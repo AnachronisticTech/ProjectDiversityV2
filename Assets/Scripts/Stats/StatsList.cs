@@ -21,4 +21,9 @@ public sealed class StatsList : MonoBehaviour
             statsDict.Add(stat.GetName, stat);
         }
     }
+
+    public void Initialize()
+    {
+        SaveGameManager.statsLists.Add(this);
+    }
 }

@@ -11,20 +11,14 @@ using System;
 [System.Serializable]
 public sealed class Stat
 {
-    //[SerializeField]
     public StatTypes _statName = StatTypes.Unknown;
 
-    //[SerializeField]
     public float _value = 0.0f;
 
-    //[SerializeField]
     public bool _hasMinValue = false;
-    //[SerializeField, ConditionalHide(nameof(_hasMinValue), true)]
     public float _minValue = float.MinValue;
 
-    //[SerializeField]
     public bool _hasMaxValue = false;
-    //[SerializeField, ConditionalHide(nameof(_hasMaxValue), true)]
     public float _maxValue = float.MaxValue;
 
     public bool _showHideStat = true;
