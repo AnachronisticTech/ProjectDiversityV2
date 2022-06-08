@@ -4,9 +4,9 @@ using UnityEngine;
 
 using HelperNamespace;
 
+[System.Obsolete("Old method to spawn entities in scene. Use EntitySpawnerV2 instead.")]
 public sealed class EntitySpawner : MonoBehaviour
 {
-    // TODO: convert this to a custom editor in order to control the different object types
     [System.Serializable]
     private class SpawnPoints
     {
@@ -54,13 +54,11 @@ public sealed class EntitySpawner : MonoBehaviour
     [SerializeField]
     private List<SpawnPoints> spawnPoints = new List<SpawnPoints>() { new SpawnPoints() };
 
-    [System.Obsolete("This coroutine is Obsolete untill the new Navigation Controller is done.")]
     private void Start()
     {
         StartCoroutine(Spawn());
     }
 
-    [System.Obsolete("This coroutine is Obsolete untill the new Navigation Controller is done.")]
     private IEnumerator Spawn()
     {
         for (int i = 0; i < spawnPoints.Count; i++)

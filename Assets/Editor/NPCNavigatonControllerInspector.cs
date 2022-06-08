@@ -6,8 +6,9 @@ using UnityEditor;
 using HelperNamespace;
 
 /// <summary>
-///     [What does this NPCNavigatonControllerInspector do]
+///     Custom editor for NPCNavigationControllerV2.
 /// </summary>
+[System.Obsolete("Old custom editor for NPCNavigationControllerV2.")]
 [CustomEditor(typeof(NPCNavigationControllerV2)), CanEditMultipleObjects]
 public sealed class NPCNavigatonControllerInspector : Editor
 {

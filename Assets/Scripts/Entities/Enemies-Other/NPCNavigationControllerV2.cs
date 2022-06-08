@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,11 +5,11 @@ using UnityEngine;
 using HelperNamespace;
 
 /// <summary>
-///     [What does this NPCNavigationControllerV2 do]
+///     Old way entities move in scene.
 /// </summary>
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
-//[Obsolete("Use this navigation controller until V3 is done.")]
+[System.Obsolete("The way entities move in scene. Use NPCNavigationControllerV3 instead.")]
 public sealed class NPCNavigationControllerV2 : MonoBehaviour
 {
     public enum BehaviourMode

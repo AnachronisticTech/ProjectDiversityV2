@@ -5,7 +5,7 @@ using UnityEngine;
 using HelperNamespace;
 
 /// <summary>
-///     [What does this EntitySpawnerV2 do]
+///     The method to spawn entities in scene.
 /// </summary>
 public sealed class EntitySpawnerV2 : MonoBehaviour, ISerializationCallbackReceiver
 {
@@ -37,11 +37,11 @@ public sealed class EntitySpawnerV2 : MonoBehaviour, ISerializationCallbackRecei
         [Header("Spawn settings")]
         [Range(1, 50)]
         public int spawnCount = 1;
-        public List<GameObject> characterPrefabs = new();
+        public List<GameObject> entityPrefabs = new();
 
-        [Header("Show Debug data")]
+        [Header("Debug data")]
         public bool showDebugData = false;
-        [ConditionalHide(nameof(showDebugData), true)]
+        [ConditionalHide(nameof(showDebugData), true), Tooltip("This controls if the default data of this List<[Class]> is initialized.")]
         public bool isInitialized = false;
     }
 
@@ -96,11 +96,38 @@ public sealed class EntitySpawnerV2 : MonoBehaviour, ISerializationCallbackRecei
 
     private void Start()
     {
-        
+        Debug.Log("Spawning...");
+
+        StartCoroutine(Spawn(() =>
+        {
+            Debug.Log("Done!");
+        }));
     }
 
-    private void Update()
+    private IEnumerator Spawn(System.Action onComplete = null)
     {
-        
+        for (int point = 0; point < spawnPoints.Length; point++)
+        {
+            for (int index = 0; index < spawnPoints[point].spawnCount; index++)
+            {
+                int selectedPrefabIndex = Random.Range(0, spawnPoints[point].entityPrefabs.Count);
+                SpawnPoints selectedSpawnPoint = spawnPoints[point];
+
+                GameObject entity = Instantiate(selectedSpawnPoint.entityPrefabs[selectedPrefabIndex]);
+                entity.transform.SetParent(selectedSpawnPoint.entityParent, false);
+
+                Transform child = selectedSpawnPoint.waypointParent.GetChild(Random.Range(0, selectedSpawnPoint.waypointParent.childCount));
+
+                NPCNavigationControllerV3 entityWaypointNavigator = entity.AddComponent<NPCNavigationControllerV3>(); ;
+                entityWaypointNavigator.currentWaypoint = child.GetComponent<Waypoint>();
+                entityWaypointNavigator.chanceOfFlippingDirection = selectedSpawnPoint.canFlipDirection ? Random.Range(selectedSpawnPoint.minChance, selectedSpawnPoint.maxChance) : 0.0f;
+
+                entity.transform.position = child.position;
+
+                yield return new WaitForEndOfFrame();
+            }
+        }
+
+        onComplete?.Invoke();
     }
 }
