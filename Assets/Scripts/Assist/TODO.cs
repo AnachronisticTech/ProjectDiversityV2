@@ -5,18 +5,29 @@ using UnityEngine;
 using HelperNamespace;
 
 /// <summary>
-///     [What does this TODO do]
+///     List of To-Do in this project.
 /// </summary>
 public sealed class TODO : MonoBehaviour
 {
+    public enum TaskState
+    {
+        Pending,
+        InDevelopment,
+        Improvements,
+        BugFixing,
+        Completed,
+    }
+
     [System.Serializable]
-    private class Task
+    public class Task
     {
         public string task = "New task";
         public string description = "Optional task description";
-        public bool isComplete = false;
+        public TaskState state = TaskState.Pending;
+
+        public bool _isTaskVisibleInInspector = true;
     }
 
-    [SerializeField]
-    private List<Task> tasks = new List<Task>();
+    [HideInInspector]
+    public List<Task> tasks = new();
 }

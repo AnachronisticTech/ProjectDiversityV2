@@ -14,7 +14,7 @@ public sealed class NPCNavigationControllerV3 : MonoBehaviour
     public Waypoint currentWaypoint;
     [Range(0.0f, 0.99f)]
     public float chanceOfFlippingDirection = 0.25f;
-    private bool isMovingClockwise = false;
+    //private bool isMovingClockwise = false;
 
     private void Start()
     {

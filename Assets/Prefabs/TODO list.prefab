@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8351033236837993600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8351033236837993614}
+  - component: {fileID: 8351033236837993615}
+  m_Layer: 0
+  m_Name: TODO list
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8351033236837993614
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351033236837993600}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -77.22394, y: -21.818235, z: 40.22531}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8351033236837993615
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8351033236837993600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1da256e9b9f36ca499bc4fc46e9d24d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tasks:
+  - task: NPCNavigationControllerV3
+    description: Refactor NPC nav controller v2
+    state: 0
+    _isTaskVisibleInInspector: 0
+  - task: Save system
+    description: Implement a saving and loading system.
+    state: 0
+    _isTaskVisibleInInspector: 0
+  - task: Loading system
+    description: Use coroutines and scene manager to implement a loading system.
+    state: 0
+    _isTaskVisibleInInspector: 1
+  - task: Finish Map
+    description: Complete the 3D part of map
+    state: 0
+    _isTaskVisibleInInspector: 0
+  - task: Custom inspector for TODO
+    description: 'Implement a custom inspector for class TODO. '
+    state: 4
+    _isTaskVisibleInInspector: 1
+  - task: Add deadline feature to TODO
+    description: Add a deadline date to TODO list. Optionally make it automatically
+      check for date and notify user for upcoming deadlines.
+    state: 1
+    _isTaskVisibleInInspector: 1
