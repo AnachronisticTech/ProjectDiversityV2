@@ -45,28 +45,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tasks:
+  - task: Custom inspector for TODO
+    description: Implement a custom editor for class TODO
+    state: 4
+    _isTaskVisibleInInspector: 0
+  - task: Add ordering feature to TODO
+    description: Add a way to order and group tasks to similar state tasks.
+    state: 4
+    _isTaskVisibleInInspector: 0
+  - task: Add deadline feature for TODO
+    description: Add a deadline date to TODO list. Optionally make it automatically
+      check the date and notify user for upcoming deadlines
+    state: 0
+    _isTaskVisibleInInspector: 0
   - task: NPCNavigationControllerV3
-    description: Refactor NPC nav controller v2
+    description: Refactor NPC navigation controller V2
     state: 0
     _isTaskVisibleInInspector: 0
   - task: Save system
-    description: Implement a saving and loading system.
+    description: Implement a saving and loading system
     state: 0
     _isTaskVisibleInInspector: 0
-  - task: Loading system
-    description: Use coroutines and scene manager to implement a loading system.
-    state: 0
-    _isTaskVisibleInInspector: 1
   - task: Finish Map
     description: Complete the 3D part of map
     state: 0
     _isTaskVisibleInInspector: 0
-  - task: Custom inspector for TODO
-    description: 'Implement a custom inspector for class TODO. '
-    state: 4
-    _isTaskVisibleInInspector: 1
-  - task: Add deadline feature to TODO
-    description: Add a deadline date to TODO list. Optionally make it automatically
-      check for date and notify user for upcoming deadlines.
-    state: 1
-    _isTaskVisibleInInspector: 1

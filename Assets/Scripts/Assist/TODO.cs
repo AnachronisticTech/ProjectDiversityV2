@@ -30,4 +30,13 @@ public sealed class TODO : MonoBehaviour
 
     [HideInInspector]
     public List<Task> tasks = new();
+
+    public void AddNewTask()
+    {
+        tasks.Add(new());
+    }
+    public void RemoveTask(int taskIndex)
+    {
+        tasks.RemoveAt(taskIndex);
+    }
 }

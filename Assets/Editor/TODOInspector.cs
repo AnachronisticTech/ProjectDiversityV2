@@ -23,6 +23,8 @@ public sealed class TODOInspector : Editor
     GUIStyle descriptionStyle = new();
 
     const string deleteUnicode = "\u2718";
+    const string upUnicode = "\u25b2";
+    const string downUnicode = "\u25bc";
 
     private void OnEnable()
     {
@@ -47,16 +49,18 @@ public sealed class TODOInspector : Editor
         if (GUILayout.Button("+", buttonStyle))
         {
             Undo.RecordObject(root, "Added new To-Do task.");
-            root.tasks.Add(new TODO.Task());
+            root.AddNewTask();
             EditorUtility.SetDirty(root);
         }
         GUI.color = Color.red;
+        GUI.enabled = root.tasks.Count > 0;
         if (GUILayout.Button("-", buttonStyle))
         {
             Undo.RecordObject(root, "Removed last To-Do task.");
-            root.tasks.RemoveAt(root.tasks.Count - 1);
+            root.RemoveTask(root.tasks.Count - 1);
             EditorUtility.SetDirty(root);
         }
+        GUI.enabled = true;
         GUI.color = baseColor;
         EditorGUILayout.EndHorizontal();
         #endregion
@@ -75,6 +79,8 @@ public sealed class TODOInspector : Editor
                 _ => baseColor,
             };
 
+            EditorGUI.BeginChangeCheck();
+
             #region Task visibility
             EditorGUI.BeginChangeCheck();
             bool visibleTaskInInspector = EditorGUILayout.Foldout(root.tasks[i]._isTaskVisibleInInspector, root.tasks[i].task, true);
@@ -89,6 +95,30 @@ public sealed class TODOInspector : Editor
             if (root.tasks[i]._isTaskVisibleInInspector)
             {
                 EditorGUILayout.BeginHorizontal(EditorStyles.helpBox);
+
+                #region Move element up/down buttons
+                EditorGUILayout.BeginVertical(GUILayout.Width(32.0f));
+
+                GUI.enabled = i > 0;
+                if (GUILayout.Button(upUnicode, GUILayout.ExpandHeight(true)))
+                {
+                    Undo.RecordObject(root, "Moved " + root.tasks[i].task + " element Up one");
+                    root.tasks = Values.SwapListElements(root.tasks, i, i - 1);
+                    EditorUtility.SetDirty(root);
+                }
+                GUI.enabled = true;
+
+                GUI.enabled = root.tasks.Count - 1 > 0;
+                if (GUILayout.Button(downUnicode, GUILayout.ExpandHeight(true)))
+                {
+                    Undo.RecordObject(root, "Moved " + root.tasks[i].task + " element Down one");
+                    root.tasks = Values.SwapListElements(root.tasks, i, i + 1);
+                    EditorUtility.SetDirty(root);
+                }
+                GUI.enabled = true;
+
+                EditorGUILayout.EndVertical();
+                #endregion
 
                 EditorGUILayout.BeginVertical();
 
@@ -141,7 +171,7 @@ public sealed class TODOInspector : Editor
                 if (GUILayout.Button(deleteUnicode, GUILayout.Width(32.0f), GUILayout.ExpandHeight(true)))
                 {
                     Undo.RecordObject(root, "Deleted " + root.tasks[i].task);
-                    root.tasks.RemoveAt(i);
+                    root.RemoveTask(i);
                     EditorUtility.SetDirty(root);
                 }
                 GUI.color = baseColor;
