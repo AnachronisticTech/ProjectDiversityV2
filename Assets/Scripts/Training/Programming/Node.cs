@@ -3,20 +3,23 @@ using UnityEngine;
 /// <summary>
 ///     [What does this Node do]
 /// </summary>
+[System.Serializable]
 public sealed class Node
 {
     public Vector3 WorldPosition { get; set; }
     public bool IsWalkable { get; set; }
 
-    public int GCost { get; set; }
-    public int HCost { get; set; }
-    public int FCost
+    public int gCost;
+    public int hCost;
+    public int fCost
     {
         get 
         { 
-            return GCost + HCost; 
+            return gCost + hCost; 
         }
     }
+
+    public Node parent;
 
     public Vector3Int GridPosition { get; private set; }
 

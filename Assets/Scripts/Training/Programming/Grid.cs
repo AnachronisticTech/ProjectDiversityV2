@@ -27,9 +27,7 @@ public sealed class Grid : MonoBehaviour
     [SerializeField]
     private LayerMask obstacleLayerMask;
 
-    [SerializeField]
-    private Transform agentTransform;
-
+    private PathFinding pathFinding;
     private Node[,,] grid;
     private float nodeDiameter;
     private Vector3Int gridSize;
@@ -42,13 +40,18 @@ public sealed class Grid : MonoBehaviour
     [SerializeField, ConditionalHide(nameof(gridGizmoDrawMode), true)]
     private Color nonWalkableGizmoColor = new(1.0f, 0.0f, 0.0f, 0.25f);
     [SerializeField, ConditionalHide(nameof(gridGizmoDrawMode), true)]
-    private Color agentGizmoColor = Color.blue;
+    private Color seekerGizmoColor = Color.blue;
     [SerializeField, ConditionalHide(nameof(gridGizmoDrawMode), true)]
-    private Color agentNeighboursNodeGizmoColor = Color.yellow;
+    private Color targetGizmoColor = Color.cyan;
+    [SerializeField, ConditionalHide(nameof(gridGizmoDrawMode), true)]
+    private Color pathNodeGizmoColor = Color.yellow;
     [SerializeField]
     private Vector3 gridWorldBottomLeft;
-    [SerializeField]
-    List<Node> neighbours = new();
+
+    private void Awake()
+    {
+        pathFinding = GetComponent<PathFinding>();
+    }
 
     private void Start()
     {
@@ -118,7 +121,7 @@ public sealed class Grid : MonoBehaviour
     
     public List<Node> GetNeighbours(Node node)
     {
-        neighbours = new();
+        List<Node> neighbours = new();
 
         for (int x = -1; x <= 1; x++)
         {
@@ -145,6 +148,7 @@ public sealed class Grid : MonoBehaviour
         return neighbours;
     }
 
+    public List<Node> path;
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.white;
@@ -156,19 +160,19 @@ public sealed class Grid : MonoBehaviour
         if (grid == null)
             return;
 
-        Node agentNode = GetNodeForWorldPosition(agentTransform.position);
+        Node seekerNode = GetNodeForWorldPosition(pathFinding.seeker.position);
+        Node targetNode = GetNodeForWorldPosition(pathFinding.target.position);
         foreach (Node node in grid)
         {
-            if (agentNode == node)
-                Gizmos.color = agentGizmoColor;
+            if (seekerNode == node)
+                Gizmos.color = seekerGizmoColor;
+            else if (targetNode == node)
+                Gizmos.color = targetGizmoColor;
             else
                 Gizmos.color = node.IsWalkable ? walkableGizmoColor : nonWalkableGizmoColor;
 
-            for (int i = 0; i < neighbours.Count; i++)
-            {
-                if (node == neighbours[i])
-                    Gizmos.color = agentNeighboursNodeGizmoColor;
-            }
+            if (path != null && path.Contains(node))
+                Gizmos.color = pathNodeGizmoColor;
 
             switch (gridGizmoDrawMode)
             {
