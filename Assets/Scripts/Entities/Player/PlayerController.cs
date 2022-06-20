@@ -14,7 +14,7 @@ using UnityEngine;
 public sealed class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
-
+      
     private CharacterController characterController;
     private GravityController gravityController;
     

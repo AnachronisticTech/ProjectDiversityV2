@@ -1,9 +1,5 @@
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
-using UnityEditor;
-
-using HelperNamespace;
 
 public sealed class StatsList : MonoBehaviour
 {
@@ -11,7 +7,7 @@ public sealed class StatsList : MonoBehaviour
     private StatsScriptableObject statsSO;
 
     public Dictionary<string, Stat> statsDict;
-
+     
     private void Start()
     {
         statsDict = new Dictionary<string, Stat>();

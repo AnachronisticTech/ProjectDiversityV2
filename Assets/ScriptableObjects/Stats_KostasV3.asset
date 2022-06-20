@@ -67,5 +67,12 @@ MonoBehaviour:
     _hasMinValue: 1
     _minValue: 4
     _hasMaxValue: 0
-    _maxValue: 100
+    _maxValue: 3.4028235e+38
     _showHideStat: 0
+  - _statName: 0
+    _value: 0
+    _hasMinValue: 1
+    _minValue: -3.4028235e+38
+    _hasMaxValue: 0
+    _maxValue: 3.4028235e+38
+    _showHideStat: 1

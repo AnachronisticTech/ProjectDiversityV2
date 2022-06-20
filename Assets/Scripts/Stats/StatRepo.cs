@@ -26,5 +26,4 @@ public sealed class StatRepo
     public const string MediumAttackChance = "MediumAttackChance";
     public const string BigAttack = "BigAttack";
     public const string BigAttackChance = "BigAttackChance";
-
 }

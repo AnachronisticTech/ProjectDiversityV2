@@ -15,7 +15,7 @@ public class StatsEnumPreGeneration : AssetPostprocessor
 {
     protected void OnPreprocessAsset()
     {
-        List<string> statsList = new List<string>();
+        List<string> statsList = new();
 
         // get the StatRepo.cs file in the current directory
         if (assetPath.Contains("StatRepo.cs", StringComparison.OrdinalIgnoreCase))

@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using HelperNamespace;
-
 /// <summary>
 ///     List of To-Do in this project.
 /// </summary>
