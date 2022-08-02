@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -40,16 +41,13 @@ namespace HelperNamespace
         {
             Gizmos.DrawLine(from, to);
             Vector3 direction = to - from;
-            DrawArrowEnd(from, direction, arrowHeadLength, arrowHeadAngle, arrowPosition);
-        }
-        private static void DrawArrowEnd(Vector3 pos, Vector3 direction, float arrowHeadLength = 0.25f, float arrowHeadAngle = 20.0f, float arrowPosition = 0.5f)
-        {
+
             //Vector3 right = (Quaternion.LookRotation(direction) * Quaternion.Euler(arrowHeadAngle, 0, 0) * Vector3.back) * arrowHeadLength;
             //Vector3 left = (Quaternion.LookRotation(direction) * Quaternion.Euler(-arrowHeadAngle, 0, 0) * Vector3.back) * arrowHeadLength;
             Vector3 up = (Quaternion.LookRotation(direction) * Quaternion.Euler(0, arrowHeadAngle, 0) * Vector3.back) * arrowHeadLength;
             Vector3 down = (Quaternion.LookRotation(direction) * Quaternion.Euler(0, -arrowHeadAngle, 0) * Vector3.back) * arrowHeadLength;
 
-            Vector3 arrowTip = pos + (direction * arrowPosition);
+            Vector3 arrowTip = from + (direction * arrowPosition);
 
             //Gizmos.DrawRay(arrowTip, right);
             //Gizmos.DrawRay(arrowTip, left);
@@ -198,6 +196,7 @@ namespace HelperNamespace
             GUILayout.Space(bottomSpace);
         }
 
+        // TODO: make this accept all dictionaries
         private static readonly List<DictGUI> dictGUI = new();
         private class DictGUI
         {
@@ -252,6 +251,14 @@ namespace HelperNamespace
             result.Apply();
 
             return result;
+        }
+    }
+
+    public static class Console
+    {
+        public static void Log(object[] arrays, string separator = ", ")
+        {
+            Debug.Log(string.Join(separator, arrays));
         }
     }
 

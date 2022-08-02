@@ -151,6 +151,9 @@ public sealed class Grid : MonoBehaviour
     public List<Node> path;
     private void OnDrawGizmos()
     {
+        if (!gameObject.activeSelf || !isActiveAndEnabled)
+            return;
+            
         Gizmos.color = Color.white;
         Gizmos.DrawWireCube(transform.position + gridOffset, gridWorldSize);
 
