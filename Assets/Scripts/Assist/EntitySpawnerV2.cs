@@ -96,11 +96,11 @@ public sealed class EntitySpawnerV2 : MonoBehaviour, ISerializationCallbackRecei
 
     private void Start()
     {
-        Debug.Log("Spawning...");
+        //Debug.Log("Spawning...");
 
         StartCoroutine(Spawn(() =>
         {
-            Debug.Log("Done!");
+            //Debug.Log("Done!");
         }));
     }
 

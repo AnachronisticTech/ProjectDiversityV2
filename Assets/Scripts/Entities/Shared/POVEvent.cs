@@ -6,9 +6,9 @@ using UnityEngine;
 using HelperNamespace;
 
 /// <summary>
-///     [What does this POV do]
+///     [What does this POVEvent do]
 /// </summary>
-public sealed class POV : MonoBehaviour
+public sealed class POVEvent : MonoBehaviour
 {
     [SerializeField]
     private Transform pivot;
@@ -19,38 +19,51 @@ public sealed class POV : MonoBehaviour
     public float forgetFocusedObjectRange = 17.0f;
     [SerializeField, Range(5.0f, 270.0f)]
     private float viewAngle = 45.0f;
-    [SerializeField, Range(0.1f, 5.0f)] 
+    [SerializeField, Range(0.1f, 5.0f)]
     private float viewHeight = 1.0f;
     [SerializeField]
     private LayerMask interestLayerMask;
     [SerializeField]
     private LayerMask sightBlockLayerMask;
 
-    private readonly Collider[] inSightCollidersCache = new Collider[3];
-    private int scansCount;
-    private float scanInterval;
-    private float scanTimer;
+    public delegate void SightEvent(Collider collider);
+
+    public event SightEvent EnterSight;
+    public event SightEvent ExitSight;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // check if the collider entered is of interest
+        // if yes then call EnterSight event
+        
+        EnterSight?.Invoke(other);
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        // check if the collider exited is of interest
+        // if yes then call ExitSight event
+
+        ExitSight?.Invoke(other);
+    }
+
+    // delegate insight
+    // ontriggerenter
+    // ontriggerexit
+
     private Mesh lineOfSightMesh;
 
-    [HideInInspector, Range(0.05f, 10.0f)]
-    public float scansPerSeconds = 0.5f;
-    [HideInInspector]
-    public List<GameObject> inSightObjects = new List<GameObject>();
-    [HideInInspector]
     public GameObject focusedObject;
-    [HideInInspector]
+
     public bool showVisibilityGizmos = false;
-    [HideInInspector]
     public Color focusAreaGizmoColor = Color.green;
-    [HideInInspector]
     public Color unfocusAreaGizmoColor = Color.red;
-    [HideInInspector, Range(3, 30)]
+    [Range(3, 30)]
     public int visionAreaSegments = 10;
 
     private void OnValidate()
     {
         lineOfSightMesh = EditorTools.DrawWedgeMesh(viewAngle, viewDistance, viewHeight, visionAreaSegments);
-        scanInterval = 1.0f / scansPerSeconds;
     }
 
     private void Start()
@@ -58,32 +71,7 @@ public sealed class POV : MonoBehaviour
         if (pivot == null)
             pivot = transform;
 
-        scanInterval = 1.0f / scansPerSeconds;
-
         OnValidate();
-    }
-
-    private void Update()
-    {
-        scanTimer -= Time.deltaTime;
-        if (scanTimer < 0)
-        {
-            scanTimer += scanInterval;
-
-            // scan area
-            scansCount = Physics.OverlapSphereNonAlloc(pivot.position, viewDistance, inSightCollidersCache, interestLayerMask, QueryTriggerInteraction.Collide);
-
-            inSightObjects.Clear();
-            for (int i = 0; i < scansCount; i++)
-            {
-                GameObject obj = inSightCollidersCache[i].gameObject;
-                if (obj != null && obj != gameObject && IsInSight(obj))
-                {
-                    inSightObjects.Add(obj);
-                }
-            }
-            focusedObject = References.GetNearestGameObject(pivot, inSightObjects);
-        }
     }
 
     private bool IsInSight(GameObject obj)
@@ -125,27 +113,6 @@ public sealed class POV : MonoBehaviour
 
             Gizmos.DrawWireSphere(pivot.position, viewDistance);
 
-            Gizmos.color = Color.red;
-            for (int i = 0; i < scansCount; i++)
-            {
-                if (inSightCollidersCache[i] != null)
-                {
-                    Vector3 inRangeGizmoPos = new Vector3(inSightCollidersCache[i].transform.position.x,
-                                                          inSightCollidersCache[i].transform.position.y + inSightCollidersCache[i].transform.localScale.y,
-                                                          inSightCollidersCache[i].transform.position.z);
-                    Gizmos.DrawSphere(inRangeGizmoPos, 0.2f);
-                }
-            }
-
-            Gizmos.color = Color.green;
-            for (int i = 0; i < inSightObjects.Count; i++)
-            {
-                Vector3 inSightGizmoPos = new Vector3(inSightObjects[i].transform.position.x,
-                                                      inSightObjects[i].transform.position.y + inSightObjects[i].transform.localScale.y,
-                                                      inSightObjects[i].transform.position.z);
-                Gizmos.DrawSphere(inSightGizmoPos, 0.2f);
-            }
-
             Gizmos.color = unfocusAreaGizmoColor;
             Gizmos.DrawWireSphere(pivot.position, forgetFocusedObjectRange);
 
@@ -163,6 +130,7 @@ public sealed class POV : MonoBehaviour
         }
     }
 
+    /**
     public void ClearStoredNavigationData()
     {
         int cacheCollidersCount = 0;
@@ -183,4 +151,5 @@ public sealed class POV : MonoBehaviour
         else
             Debug.Log("No objects found to clear.");
     }
+    **/
 }

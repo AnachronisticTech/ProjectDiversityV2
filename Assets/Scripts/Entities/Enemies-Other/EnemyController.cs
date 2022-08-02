@@ -12,7 +12,7 @@ using HelperNamespace;
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(GravityController))]
 [RequireComponent(typeof(StatsList))]
-[RequireComponent(typeof(POV))]
+//[RequireComponent(typeof(POV))]
 public sealed class EnemyController : MonoBehaviour
 {
     public StatsList EnemyStats { get; private set; }
@@ -35,13 +35,21 @@ public sealed class EnemyController : MonoBehaviour
     [HideInInspector, Range(0.0f,100.0f)]
     public float attackTypeChance = 0.0f;
 
-    private POV pov;
+    //private POV pov;
+    [SerializeField]
+    private POVEvent pov;
+
+    private void Awake()
+    {
+        // subscribe ontriggerenter
+        // subscribe ontriggerexit
+    }
 
     private void Start()
     {
         EnemyStats = GetComponent<StatsList>();
 
-        pov = GetComponent<POV>();
+        //pov = GetComponent<POV>();
 
         if (interactTranformPivot == null)
             interactTranformPivot = transform;
