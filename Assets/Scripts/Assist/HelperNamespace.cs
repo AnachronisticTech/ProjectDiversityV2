@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEditor;
 
@@ -259,6 +260,14 @@ namespace HelperNamespace
         public static void Log(object[] arrays, string separator = ", ")
         {
             Debug.Log(string.Join(separator, arrays));
+        }
+
+        public static void ClearLog()
+        {
+            Assembly assembly = Assembly.GetAssembly(typeof(Editor));
+            Type type = assembly.GetType("UnityEditor.LogEntries");
+            MethodInfo method = type.GetMethod("Clear");
+            method.Invoke(new object(), null);
         }
     }
 
