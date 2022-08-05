@@ -19,7 +19,7 @@ MonoBehaviour:
     _minValue: 0
     _hasMaxValue: 1
     _maxValue: 500
-    _showHideStat: 1
+    _showHideStat: 0
   - _statName: 2
     _value: 3
     _hasMinValue: 1
@@ -28,12 +28,12 @@ MonoBehaviour:
     _maxValue: 3.4028235e+38
     _showHideStat: 0
   - _statName: 3
-    _value: 1.25
+    _value: 3
     _hasMinValue: 1
     _minValue: 1.1
     _hasMaxValue: 0
     _maxValue: 3.4028235e+38
-    _showHideStat: 0
+    _showHideStat: 1
   - _statName: 4
     _value: 0.5
     _hasMinValue: 1

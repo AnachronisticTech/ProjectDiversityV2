@@ -14,8 +14,7 @@ using HelperNamespace;
 public sealed class PW_GridGenerator : MonoBehaviour
 {
     [Header("Grid setup")]
-    [SerializeField, Range(10, 100)]
-    private int size = 50;
+    public Vector2Int size = new(100, 100);
 
     [SerializeField]
     private Color unknownColor;
@@ -49,7 +48,13 @@ public sealed class PW_GridGenerator : MonoBehaviour
 
     private Vector3 totalGenerateAreaPosition;
     private Vector3 totalGenerateAreaSize;
-    
+
+    [Header("Debugging")]
+
+    [SerializeField]
+    private Vector2Int sizeBounds = new(1, 500);
+    public Vector2Int GetSizeBounds { get { return sizeBounds; } }
+
     [SerializeField]
     private bool showCalculateTime = true;
     private System.Diagnostics.Stopwatch landNoiseCalculateTime;
@@ -91,14 +96,14 @@ public sealed class PW_GridGenerator : MonoBehaviour
         if (showCalculateTime)
             landNoiseCalculateTime = System.Diagnostics.Stopwatch.StartNew();
 
-        noiseMap = new float[size, size];
+        noiseMap = new float[size.x, size.y];
 
         float perlinXOffset = UnityEngine.Random.Range(-10000f, 10000f);
         float perlinYOffset = UnityEngine.Random.Range(-10000f, 10000f);
 
-        for (int x = 0; x < size; x++)
+        for (int x = 0; x < size.x; x++)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < size.y; y++)
             {
                 float noiseValue = Mathf.PerlinNoise(x * perlinScale + perlinXOffset, y * perlinScale + perlinYOffset);
                 noiseMap[x, y] = noiseValue;
@@ -114,13 +119,13 @@ public sealed class PW_GridGenerator : MonoBehaviour
         if (showCalculateTime)
             falloffCalculateTime = System.Diagnostics.Stopwatch.StartNew();
 
-        falloffMap = new float[size, size];
-        for (int x = 0; x < size; x++)
+        falloffMap = new float[size.x, size.y];
+        for (int x = 0; x < size.x; x++)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < size.y; y++)
             {
-                float xv = x / (float)size * 2 - 1;
-                float yv = y / (float)size * 2 - 1;
+                float xv = x / (float)size.x * 2 - 1;
+                float yv = y / (float)size.y * 2 - 1;
 
                 float v = Mathf.Max(Mathf.Abs(xv), Mathf.Abs(yv));
 
@@ -137,11 +142,11 @@ public sealed class PW_GridGenerator : MonoBehaviour
         if (showCalculateTime)
             generateLandTime = System.Diagnostics.Stopwatch.StartNew();
         
-        grid = new PW_CellInfo[size, size];
+        grid = new PW_CellInfo[size.x, size.y];
 
-        for (int x = 0; x < size; x++)
+        for (int x = 0; x < size.x; x++)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < size.y; y++)
             {
                 float noiseValue = noiseMap[x, y];
                 noiseValue -= falloffMap[x, y];
@@ -186,9 +191,9 @@ public sealed class PW_GridGenerator : MonoBehaviour
         List<int> triangles = new();
         List<Vector2> uvs = new();
 
-        for (int x = 0; x < size; x++)
+        for (int x = 0; x < size.x; x++)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < size.y; y++)
             {
                 //PW_CellInfo cell = grid[x, y];
                 //
@@ -199,10 +204,10 @@ public sealed class PW_GridGenerator : MonoBehaviour
                     Vector3 c = new(x - 0.5f, 0, y - 0.5f);
                     Vector3 d = new(x + 0.5f, 0, y - 0.5f);
 
-                    Vector2 uvA = new(x / (float)size, y / (float)size);
-                    Vector2 uvB = new((x + 1) / (float)size, y / (float)size);
-                    Vector2 uvC = new(x / (float)size, (y + 1) / (float)size);
-                    Vector2 uvD = new((x + 1) / (float)size, (y + 1) / (float)size);
+                    Vector2 uvA = new(x / (float)size.x, y / (float)size.y);
+                    Vector2 uvB = new((x + 1) / (float)size.x, y / (float)size.y);
+                    Vector2 uvC = new(x / (float)size.x, (y + 1) / (float)size.y);
+                    Vector2 uvD = new((x + 1) / (float)size.x, (y + 1) / (float)size.y);
 
                     Vector3[] v = new[] { a, b, c, b, d, c };
                     Vector2[] uv = new[] { uvA, uvB, uvC, uvB, uvD, uvC };
@@ -238,31 +243,31 @@ public sealed class PW_GridGenerator : MonoBehaviour
         if (showCalculateTime)
             drawTerrainTextureTime = System.Diagnostics.Stopwatch.StartNew();
 
-        Texture2D texture = new(size, size);
-        Color[] colorMap = new Color[size * size];
+        Texture2D texture = new(size.x, size.y);
+        Color[] colorMap = new Color[size.x * size.y];
 
-        for (int x = 0; x < size; x++)
+        for (int x = 0; x < size.x; x++)
         {
-            for (int y = 0; y < size; y++)
+            for (int y = 0; y < size.y; y++)
             {
                 PW_CellInfo cell = grid[x, y];
 
                 switch (cell.CellType)
                 {
                     case PW_CellInfo.Type.Unknown:
-                        colorMap[y * size + x] = unknownColor;
+                        colorMap[y * size.x + x] = unknownColor;
                         break;
                     case PW_CellInfo.Type.Water:
-                        colorMap[y * size + x] = waterColor;
+                        colorMap[y * size.x + x] = waterColor;
                         break;
                     case PW_CellInfo.Type.Sand:
-                        colorMap[y * size + x] = sandColor;
+                        colorMap[y * size.x + x] = sandColor;
                         break;
                     case PW_CellInfo.Type.Greenery:
-                        colorMap[y * size + x] = greeneryColor;
+                        colorMap[y * size.x + x] = greeneryColor;
                         break;
                     case PW_CellInfo.Type.Snow:
-                        colorMap[y * size + x] = snowColor;
+                        colorMap[y * size.x + x] = snowColor;
                         break;
                     default:
                         break;
@@ -301,8 +306,8 @@ public sealed class PW_GridGenerator : MonoBehaviour
     {
         Gizmos.color = Color.yellow;
 
-        totalGenerateAreaPosition = new(transform.position.x + (size / 2.0f), transform.position.y + 0.5f, transform.position.z + (size / 2.0f));
-        totalGenerateAreaSize = new(size, 1.0f, size);
+        totalGenerateAreaPosition = new(transform.position.x + (size.x / 2.0f), transform.position.y + 0.5f, transform.position.z + (size.y / 2.0f));
+        totalGenerateAreaSize = new(size.x, 1.0f, size.y);
 
         Gizmos.DrawWireCube(totalGenerateAreaPosition, totalGenerateAreaSize);
     }
@@ -320,6 +325,15 @@ public sealed class PW_GridGeneratorEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        int clampedSizeX = Values.EnsureNumericInRange(root.size.x, root.GetSizeBounds.x, root.GetSizeBounds.y);
+        int clampedSizeY = Values.EnsureNumericInRange(root.size.y, root.GetSizeBounds.x, root.GetSizeBounds.y);
+        root.size = new(clampedSizeX, clampedSizeY);
+        
+        //if (root.size.x < 1)
+        //    root.size.x = 1;
+        //if (root.size.y < 1)
+        //    root.size.y = 1;
+
         base.OnInspectorGUI();
 
         EditorTools.Line();

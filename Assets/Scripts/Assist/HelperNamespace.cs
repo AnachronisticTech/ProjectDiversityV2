@@ -330,5 +330,30 @@ namespace HelperNamespace
 
             return value;
         }
+        public static T EnsureNumericInRange<T>(T value, T minValue, T maxValue) where T : IComparable, IFormattable, IConvertible, IComparable<T>, IEquatable<T>
+        {
+            if (value.CompareTo(minValue) < 0)
+                value = minValue;
+            if (value.CompareTo(maxValue) > 0)
+                value = maxValue;
+
+            return value;
+        }
+        public static T[,] EnsureNumericInRange<T>(T valueX, T valueY, T minValueX, T minValueY, T maxValueX, T maxValueY) where T : IComparable, IFormattable, IConvertible, IComparable<T>, IEquatable<T>
+        {
+            if (valueX.CompareTo(minValueX) < 0)
+                valueX = minValueX;
+            if (valueY.CompareTo(minValueY) < 0)
+                valueY = minValueY;
+
+            if (valueX.CompareTo(maxValueX) > 0)
+                valueX = maxValueX;
+            if (valueY.CompareTo(maxValueY) > 0)
+                valueY = maxValueY;
+
+            returnValue = new T[valueX, valueY];
+
+            return value;
+        }
     }
 }

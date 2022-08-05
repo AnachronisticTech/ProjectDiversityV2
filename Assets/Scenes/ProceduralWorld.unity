@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028331, g: 0.2257133, b: 0.3069217, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -315,8 +315,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1242223735}
-  m_LocalRotation: {x: -0.31846848, y: -0.47918317, z: 0.19195768, w: -0.7950557}
-  m_LocalPosition: {x: 7.957306, y: 58.364357, z: 45.598248}
+  m_LocalRotation: {x: -0.4037597, y: -0.343495, z: 0.16681792, w: -0.83136094}
+  m_LocalPosition: {x: 14.607712, y: 41.90898, z: 12.618065}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -371,7 +371,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &1290844295
 MonoBehaviour:
@@ -385,7 +385,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd4787fea5cb62a449ee3ef7a0a9b40a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: 20
+  size: {x: 23, y: 500}
   unknownColor: {r: 1, g: 0, b: 1, a: 1}
   waterLevel: 0.3
   waterColor: {r: 0, g: 0.7880776, b: 1, a: 1}
@@ -397,6 +397,7 @@ MonoBehaviour:
   snowColor: {r: 1, g: 1, b: 1, a: 1}
   perlinScale: 0.162
   terrainMaterial: {fileID: 2100000, guid: ec13266e9ae2ca54080af938eb479bdd, type: 2}
+  sizeBounds: {x: 1, y: 500}
   showCalculateTime: 1
 --- !u!4 &1290844296
 Transform:
