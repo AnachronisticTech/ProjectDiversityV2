@@ -9,9 +9,15 @@ public sealed class PW_CellInfo
         Water,
         Sand,
         Greenery,
+        RockySnow,
         Snow
     }
 
-    private Type _cellType;
-    public Type CellType { get => _cellType; set => _cellType = value; }
+    public PW_CellInfo(Type cellType = Type.Unknown)
+    {
+        _cellType = cellType;
+    }
+
+    private readonly Type _cellType;
+    public Type GetCellType { get => _cellType; }
 }

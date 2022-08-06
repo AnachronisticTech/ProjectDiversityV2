@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,47 +12,58 @@ using HelperNamespace;
 /// </summary>
 public sealed class PW_GridGenerator : MonoBehaviour
 {
-    [Header("Grid setup")]
+    [Header("Size and Scale")]
+    [SerializeField]
+    private bool useSeed = false;
+    [ConditionalHide(nameof(useSeed), true)]
+    public short seed = 0;
     public Vector2Int size = new(100, 100);
-
-    [SerializeField]
-    private Color unknownColor;
-    [SerializeField, Range(0.0f, 1.0f)]
-    private float waterLevel = 0.3f;
-    [SerializeField]
-    private Color waterColor;
-    [SerializeField, Range(0.0f, 1.0f)]
-    private float sandLevel = 0.35f;
-    [SerializeField]
-    private Color sandColor;
-    [SerializeField, Range(0.0f, 1.0f)]
-    private float greeneryLevel = 0.8f;
-    [SerializeField]
-    private Color greeneryColor;
-    [SerializeField, Range(0.0f, 1.0f)]
-    private float snowLevel = 0.9f;
-    [SerializeField]
-    private Color snowColor;
-
     [SerializeField, Range(0.01f, 0.5f)]
     private float perlinScale = 0.255f;
 
     private float[,] noiseMap;
     private float[,] falloffMap;
 
+    [Header("Material")]
     [SerializeField]
     private Material terrainMaterial;
+    [SerializeField]
+    private FilterMode terrainMaterialFilterMode = FilterMode.Point;
+
+    [Header("Levels and Colors")]
+    [SerializeField, Range(0.0f, 1.0f)]
+    private float waterLevel = 0.3f;
+    [SerializeField]
+    private Gradient waterGradientColor;
+
+    [SerializeField, Range(0.0f, 1.0f)]
+    private float sandLevel = 0.35f;
+    [SerializeField]
+    private Gradient sandGradientColor;
+    
+    [SerializeField, Range(0.0f, 1.0f)]
+    private float greeneryLevel = 0.8f;
+    [SerializeField]
+    private Gradient greeneryGradientColor;
+    
+    [SerializeField, Range(0.0f, 1.0f)]
+    private float snowLevel = 0.9f;
+    [SerializeField]
+    private Gradient rockySnowGradientColor;
+    [SerializeField]
+    private Gradient snowGradientColor;
 
     private PW_CellInfo[,] grid;
 
-    private Vector3 totalGenerateAreaPosition;
-    private Vector3 totalGenerateAreaSize;
-
+    [Space(height: 10.0f)]
     [Header("Debugging")]
-
     [SerializeField]
+    private Color unknownColor;
     private Vector2Int sizeBounds = new(1, 500);
     public Vector2Int GetSizeBounds { get { return sizeBounds; } }
+
+    private Vector3 totalGenerateAreaPosition;
+    private Vector3 totalGenerateAreaSize;
 
     [SerializeField]
     private bool showCalculateTime = true;
@@ -80,7 +90,6 @@ public sealed class PW_GridGenerator : MonoBehaviour
         if (showCalculateTime)
             ShowGenerateTime();
     }
-
     public void RegenerateWorld()
     {
         HelperNamespace.Console.ClearLog();
@@ -98,14 +107,14 @@ public sealed class PW_GridGenerator : MonoBehaviour
 
         noiseMap = new float[size.x, size.y];
 
-        float perlinXOffset = UnityEngine.Random.Range(-10000f, 10000f);
-        float perlinYOffset = UnityEngine.Random.Range(-10000f, 10000f);
+        if (!useSeed)
+            seed = (short)Random.Range(short.MinValue, short.MaxValue);
 
         for (int x = 0; x < size.x; x++)
         {
             for (int y = 0; y < size.y; y++)
             {
-                float noiseValue = Mathf.PerlinNoise(x * perlinScale + perlinXOffset, y * perlinScale + perlinYOffset);
+                float noiseValue = Mathf.PerlinNoise(x * perlinScale + seed, y * perlinScale + seed);
                 noiseMap[x, y] = noiseValue;
             }
         }
@@ -151,27 +160,13 @@ public sealed class PW_GridGenerator : MonoBehaviour
                 float noiseValue = noiseMap[x, y];
                 noiseValue -= falloffMap[x, y];
 
-                PW_CellInfo.Type cellType = PW_CellInfo.Type.Unknown;
+                PW_CellInfo.Type cellType = noiseValue <= waterLevel    ? PW_CellInfo.Type.Water    :
+                                            noiseValue <= sandLevel     ? PW_CellInfo.Type.Sand     :
+                                            noiseValue <= greeneryLevel ? PW_CellInfo.Type.Greenery :
+                                            noiseValue <= snowLevel     ? PW_CellInfo.Type.RockySnow:
+                                                                          PW_CellInfo.Type.Snow     ;
 
-                if (noiseValue <= waterLevel)
-                {
-                    cellType = PW_CellInfo.Type.Water;
-                }
-                else if (noiseValue <= sandLevel)
-                {
-                    cellType = PW_CellInfo.Type.Sand;
-                }
-                else if (noiseValue <= greeneryLevel)
-                {
-                    cellType = PW_CellInfo.Type.Greenery;
-                }
-                else if (noiseValue <= snowLevel)
-                {
-                    cellType = PW_CellInfo.Type.Snow;
-                }
-
-                PW_CellInfo cell = new();
-                cell.CellType = cellType;
+                PW_CellInfo cell = new(cellType);
 
                 grid[x, y] = cell;
             }
@@ -230,9 +225,7 @@ public sealed class PW_GridGenerator : MonoBehaviour
         MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
         meshFilter.mesh = mesh;
 
-        MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-
-        Debug.Log(mesh.vertices.Length);
+        MeshRenderer _ = gameObject.AddComponent<MeshRenderer>();
 
         if (showCalculateTime)
             drawTerrainMeshTime.Stop();
@@ -244,7 +237,7 @@ public sealed class PW_GridGenerator : MonoBehaviour
             drawTerrainTextureTime = System.Diagnostics.Stopwatch.StartNew();
 
         Texture2D texture = new(size.x, size.y);
-        Color[] colorMap = new Color[size.x * size.y];
+        Color32[] colorMap = new Color32[size.x * size.y];
 
         for (int x = 0; x < size.x; x++)
         {
@@ -252,30 +245,34 @@ public sealed class PW_GridGenerator : MonoBehaviour
             {
                 PW_CellInfo cell = grid[x, y];
 
-                switch (cell.CellType)
+                switch (cell.GetCellType)
                 {
                     case PW_CellInfo.Type.Unknown:
                         colorMap[y * size.x + x] = unknownColor;
                         break;
                     case PW_CellInfo.Type.Water:
-                        colorMap[y * size.x + x] = waterColor;
+                        colorMap[y * size.x + x] = waterGradientColor.Evaluate(UnityEngine.Random.Range(0.0f, 1.0f));
                         break;
                     case PW_CellInfo.Type.Sand:
-                        colorMap[y * size.x + x] = sandColor;
+                        colorMap[y * size.x + x] = sandGradientColor.Evaluate(UnityEngine.Random.Range(0.0f, 1.0f));
                         break;
                     case PW_CellInfo.Type.Greenery:
-                        colorMap[y * size.x + x] = greeneryColor;
+                        colorMap[y * size.x + x] = greeneryGradientColor.Evaluate(UnityEngine.Random.Range(0.0f, 1.0f));
+                        break;
+                    case PW_CellInfo.Type.RockySnow:
+                        colorMap[y * size.x + x] = rockySnowGradientColor.Evaluate(UnityEngine.Random.Range(0.0f, 1.0f));
                         break;
                     case PW_CellInfo.Type.Snow:
-                        colorMap[y * size.x + x] = snowColor;
+                        colorMap[y * size.x + x] = snowGradientColor.Evaluate(UnityEngine.Random.Range(0.0f, 1.0f));
                         break;
                     default:
+                        Debug.LogErrorFormat("Failed to color mesh on grid[{0},{1}]", x, y);
                         break;
                 }
             }
         }
-        texture.filterMode = FilterMode.Point;
-        texture.SetPixels(colorMap);
+        texture.filterMode = terrainMaterialFilterMode;
+        texture.SetPixels32(colorMap);
         texture.Apply();
 
         MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
@@ -318,6 +315,9 @@ public sealed class PW_GridGeneratorEditor : Editor
 {
     PW_GridGenerator root;
 
+    private bool firstSeedCollected = false;
+    private float seed;
+
     private void OnEnable()
     {
         root = (PW_GridGenerator)target;
@@ -325,21 +325,32 @@ public sealed class PW_GridGeneratorEditor : Editor
 
     public override void OnInspectorGUI()
     {
+        //root.seed = Mathf.Clamp(root.seed, -10000.0f, 10000.0f);
+
         int clampedSizeX = Values.EnsureNumericInRange(root.size.x, root.GetSizeBounds.x, root.GetSizeBounds.y);
         int clampedSizeY = Values.EnsureNumericInRange(root.size.y, root.GetSizeBounds.x, root.GetSizeBounds.y);
         root.size = new(clampedSizeX, clampedSizeY);
-        
-        //if (root.size.x < 1)
-        //    root.size.x = 1;
-        //if (root.size.y < 1)
-        //    root.size.y = 1;
 
         base.OnInspectorGUI();
 
         EditorTools.Line();
 
+        if (!firstSeedCollected)
+        {
+            seed = root.seed;
+            firstSeedCollected = Application.isPlaying;
+        }
+
         GUI.enabled = Application.isPlaying;
         if(GUILayout.Button(new GUIContent("Regenerate world", "This is only available in play mode")))
+        {
             root.RegenerateWorld();
+            seed = root.seed;
+        }
+
+        GUILayout.BeginHorizontal();
+        EditorGUILayout.FloatField(new GUIContent("Grid Seed"), seed);
+        GUI.enabled = Application.isPlaying;
+        GUILayout.EndHorizontal();
     }
 }
