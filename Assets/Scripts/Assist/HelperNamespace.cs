@@ -197,7 +197,7 @@ namespace HelperNamespace
             GUILayout.Space(bottomSpace);
         }
 
-        // TODO: make this accept all dictionaries
+        /* These functions are not available in this branch
         private static readonly List<DictGUI> dictGUI = new();
         private class DictGUI
         {
@@ -239,6 +239,7 @@ namespace HelperNamespace
                 Label("Dictionary is only visible in Play mode", 14, textColor: new Color(255.0f, 140.0f, 0.0f), labelAlignment: TextAnchor.MiddleCenter);
             }
         }
+        */
 
         public static Texture2D MakeTexture(Color color, int width = 1, int height = 1)
         {
