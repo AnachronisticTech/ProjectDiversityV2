@@ -386,7 +386,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useSeed: 1
-  seed: 0
+  seed: 1
   size: {x: 30, y: 50}
   perlinScale: 0.075
   terrainMaterial: {fileID: 2100000, guid: ec13266e9ae2ca54080af938eb479bdd, type: 2}
