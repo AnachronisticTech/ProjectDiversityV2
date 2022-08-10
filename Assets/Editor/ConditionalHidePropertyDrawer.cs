@@ -47,7 +47,7 @@ public sealed class ConditionalHidePropertyDrawer : PropertyDrawer
 		
 		if (sourcePropertyValue != null)
 		{
-			enabled = sourcePropertyValue.boolValue;
+			enabled = condHAtt.ReverseCondition ? !sourcePropertyValue.boolValue : sourcePropertyValue.boolValue;
 		}
 		else
 		{

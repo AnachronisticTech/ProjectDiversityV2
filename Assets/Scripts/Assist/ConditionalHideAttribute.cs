@@ -18,14 +18,14 @@ namespace HelperNamespace
 		private readonly bool _hideInInspector;
 		public bool IsHidingInInspector { get => _hideInInspector; }
 
-		public ConditionalHideAttribute(string conditionalSourceField) {
-			_conditionalSourceField = conditionalSourceField;
-			_hideInInspector = false;
-		}
-	
-		public ConditionalHideAttribute(string conditionalSourceField, bool hideInInspector) {
+        // If set to true then the condition will be reversed and then calculate the visibility in the inspector
+        private readonly bool _reverseCondition;
+        public bool ReverseCondition { get => _reverseCondition; }
+
+        public ConditionalHideAttribute(string conditionalSourceField, bool hideInInspector = true, bool reverseCondition = false) {
 			_conditionalSourceField = conditionalSourceField;
 			_hideInInspector = hideInInspector;
+			_reverseCondition = reverseCondition;
 		}
-	}
+    }
 }
