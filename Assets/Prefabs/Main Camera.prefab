@@ -92,9 +92,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4ceefb79cf9c244b9fe8aacdc2b477d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mode: 0
-  targetScreenSize: {x: 256, y: 224}
-  screenScaleFactor: 6
+  targetScreenSize: {x: 640, y: 480}
+  display: {fileID: 0}
 --- !u!81 &2539719481713273515
 AudioListener:
   m_ObjectHideFlags: 0
@@ -115,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RenderShadows: 1
+  m_RenderShadows: 0
   m_RequiresDepthTextureOption: 2
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0

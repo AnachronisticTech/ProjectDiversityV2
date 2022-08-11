@@ -11,27 +11,19 @@ using UnityEditor;
 /// </summary>
 public sealed class PixelatedCamera : MonoBehaviour
 {
-    public enum PixelScreenMode { Resize, Scale }
-
-    private static PixelatedCamera main;
-
     private Camera renderCamera;
     private RenderTexture renderTexture;
-    private Vector2Int screensize = new();
 
     [Header("Screen scaling settings")]
-    public PixelScreenMode mode;
+    [SerializeField]
+    private Vector2Int targetScreenSize = new( 256, 224 );
 
-    public Vector2Int targetScreenSize = new( 256, 144 );  // Only used with PixelScreenMode.Resize
-    public uint screenScaleFactor = 1;  // Only used with PixelScreenMode.Scale
+    [SerializeField]
+    private RawImage display;
 
-    private readonly RawImage display;
-
-    private void Awake()
+    private void OnValidate()
     {
-        // Try to set as main pixel camera
-        if (main == null) 
-            main = this;
+        targetScreenSize.Clamp(new(256, 224), new(640, 480));
     }
 
     private void Start()
@@ -40,27 +32,15 @@ public sealed class PixelatedCamera : MonoBehaviour
         Init();
     }
 
-    private void Update()
-    {
-        // Re initialize system if the screen has been resized
-        if (CheckScreenResize()) Init();
-    }
-
     public void Init()
     {
         // Initialize the camera and get screen size values
         if (!renderCamera) renderCamera = GetComponent<Camera>();
-        screensize.x = Screen.width;
-        screensize.y = Screen.height;
-
-        // Prevent any error
-        if (screenScaleFactor < 1) screenScaleFactor = 1;
-        if (targetScreenSize.x < 1) targetScreenSize.x = 1;
-        if (targetScreenSize.y < 1) targetScreenSize.y = 1;
 
         // Calculate the render texture size
-        int width = mode == PixelScreenMode.Resize ? (int)targetScreenSize.x : screensize.x / (int)screenScaleFactor;
-        int height = mode == PixelScreenMode.Resize ? (int)targetScreenSize.y : screensize.y / (int)screenScaleFactor;
+        int width = targetScreenSize.x;
+        int height = targetScreenSize.y;
+        Debug.LogFormat("Screen resolution is: {0} x {1}", width, height);
 
         // Initialize the render texture
         renderTexture = new RenderTexture(width, height, 24)
@@ -75,12 +55,6 @@ public sealed class PixelatedCamera : MonoBehaviour
         // Attaching texture to the display UI RawImage
         display.texture = renderTexture;
     }
-
-    public bool CheckScreenResize()
-    {
-        // Check whether the screen has been resized
-        return Screen.width != screensize.x || Screen.height != screensize.y;
-    }
 }
 
 [CustomEditor(typeof(PixelatedCamera)), CanEditMultipleObjects]
@@ -88,41 +62,18 @@ public sealed class PixelatedCameraInspector : Editor
 {
     PixelatedCamera root;
 
-    SerializedProperty mode;
-    SerializedProperty targetScreenSize;
-    SerializedProperty screenScaleFactor;
-
     private void OnEnable()
     {
         root = (PixelatedCamera)target;
-
-        mode = serializedObject.FindProperty(nameof(root.mode));
-        targetScreenSize = serializedObject.FindProperty(nameof(root.targetScreenSize));
-        screenScaleFactor = serializedObject.FindProperty(nameof(root.screenScaleFactor));
     }
 
     public override void OnInspectorGUI()
     {
-        serializedObject.Update();
+        base.OnInspectorGUI();
 
-        EditorGUILayout.PropertyField(mode);
+        GUILayout.Space(5.0f);
 
-        switch (root.mode)
-        {
-            case PixelatedCamera.PixelScreenMode.Resize:
-                {
-                    EditorGUILayout.PropertyField(targetScreenSize);
-                }
-                break;
-            case PixelatedCamera.PixelScreenMode.Scale:
-                {
-                    EditorGUILayout.PropertyField(screenScaleFactor);
-                }
-                break;
-            default:
-                break;
-        }
-
-        serializedObject.ApplyModifiedProperties();
+        if (GUILayout.Button(new GUIContent("Update camera", "This is only available in edit mode")))
+            root.Init();
     }
 }
