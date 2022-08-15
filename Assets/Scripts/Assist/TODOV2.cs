@@ -1,36 +1,48 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
-using HelperNamespace;
+using CoreAttributes;
 
 /// <summary>
 ///     [What does this TODOV2 do]
 /// </summary>
 public sealed class TODOV2 : MonoBehaviour
 {
-    public class Client
+    [System.Serializable]
+    public enum FeatureState
     {
-        private readonly string _name;
-        private readonly int _age;
-
-        public Client(string name = "Name", int age = 0)
-        {
-            _name = name;
-            _age = age;
-        }
-
-        public string GetName { get { return _name; } }
-        public int GetAge { get { return _age; } }
+        Pending,
+        InDevelopment,
+        Testing,
+        BugFixing,
+        Done
     }
 
-    private readonly object[] clients = { "Panikkos",
-                                          "Kostas" };
-    private readonly object[] clients2 = { new Client("Panikkos", 25), 
-                                           new Client("Kostas", 22) };
-
-    private void Start()
+    [System.Serializable]
+    public enum BuildState
     {
-        Console.Log(clients2);
+        [InspectorName("Development")]
+        Dev,
+        Live
     }
+
+    [System.Serializable]
+    public class FeatureProperties
+    {
+        public string name;
+        public string desc;
+        public FeatureState state;
+    }
+
+    [System.Serializable]
+    public class Build
+    {
+        public string BuildIndex;
+        public List<FeatureProperties> changeLog;
+        public BuildState buildState;
+    }
+
+    public List<Build> builds;
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 /// <summary>
 ///     List of To-Do in this project.
 /// </summary>
+[System.Obsolete("Depricated TODO. Use TODOV2 instead.")]
 public sealed class TODO : MonoBehaviour
 {
     public enum TaskState

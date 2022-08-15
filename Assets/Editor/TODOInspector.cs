@@ -9,6 +9,7 @@ using HelperNamespace;
 ///     Custom editor for TODO class.
 /// </summary>
 [CustomEditor(typeof(TODO)), CanEditMultipleObjects]
+[System.Obsolete("Depricated TODO inspector. Use TODOV2 instead.")]
 public sealed class TODOInspector : Editor
 {
     TODO root;
