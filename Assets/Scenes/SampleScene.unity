@@ -255,7 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   builds:
-  - BuildIndex: 
+  - buildName: New Build
     changeLog: []
     buildState: 0
 --- !u!4 &528099845
