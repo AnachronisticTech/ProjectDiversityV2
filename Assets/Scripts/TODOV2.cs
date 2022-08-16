@@ -11,17 +11,18 @@ using CoreAttributes;
 public sealed class TODOV2 : MonoBehaviour
 {
     [System.Serializable]
-    private enum FeatureState
+    public enum FeatureState
     {
         Pending,
         InDevelopment,
         Testing,
         BugFixing,
-        Done
+        Done,
+        Live
     }
 
     [System.Serializable]
-    private enum BuildState
+    public enum BuildState
     {
         [InspectorName("Development")]
         Dev,
@@ -29,52 +30,42 @@ public sealed class TODOV2 : MonoBehaviour
     }
 
     [System.Serializable]
-    private class FeatureProperties
+    public class FeatureProperties
     {
         public string name;
         public string desc;
         public FeatureState state;
+
+        public bool isVisibleInInspector = true;
+
+        public FeatureProperties(string name = defaultFeatureName, string desc = defaultEmptyString, FeatureState state = FeatureState.Pending)
+        {
+            this.name = name;
+            this.desc = desc;
+            this.state = state;
+        }
     }
 
     [System.Serializable]
-    private class Build
+    public class Build
     {
-        public string buildName;
+        public string name;
         public List<FeatureProperties> changeLog;
-        public BuildState buildState;
+        public BuildState state;
 
-        public Build(string buildName = defaultBuildName)
+        public bool isVisibleInInspector = true;
+
+        public Build(string name = defaultBuildName, BuildState state = BuildState.Dev)
         {
-            this.buildName = buildName;
+            this.name = name;
+            changeLog = new List<FeatureProperties>();
+            this.state = state;
         }
     }
-    #region Build functions
-
-    public void AddNewBuildToList(string buildName = defaultBuildName) 
-    { 
-        builds.Add(new Build(buildName)); 
-    }
-
-    public void RemoveBuildIndex(int index = -1)
-    {
-        builds.RemoveAt(index <= -1 ? builds.Count - 1 : index);
-    }
-
-    public int GetBuildCount { get { return builds.Count; } }
-
-    public string GetBuildNameAtIndex(int index)
-    {
-        return builds[index].buildName;
-    }
-
-    public void SetBuildNameAtIndex(string newBuildName, int index)
-    {
-        builds[index].buildName = newBuildName;
-    }
-
-    #endregion
 
     private const string defaultBuildName = "New Build";
+    private const string defaultFeatureName = "New Feature";
+    private const string defaultEmptyString = "";
 
-    private List<Build> builds;
+    public List<Build> builds = new();
 }
