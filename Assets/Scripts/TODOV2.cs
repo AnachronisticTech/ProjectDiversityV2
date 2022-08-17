@@ -4,6 +4,7 @@ using System.ComponentModel;
 using UnityEngine;
 
 using CoreAttributes;
+using UnityEditor;
 
 /// <summary>
 ///     [What does this TODOV2 do]
@@ -58,7 +59,7 @@ public sealed class TODOV2 : MonoBehaviour
         public Build(string name = defaultBuildName, BuildState state = BuildState.Dev)
         {
             this.name = name;
-            changeLog = new List<FeatureProperties>();
+            changeLog = new List<FeatureProperties>() { new FeatureProperties() };
             this.state = state;
         }
     }
@@ -68,4 +69,34 @@ public sealed class TODOV2 : MonoBehaviour
     private const string defaultEmptyString = "";
 
     public List<Build> builds = new();
+
+    public string GetVersionName(int buildIndex, int featureIndex = -1)
+    {
+        return buildIndex.ToString() + "." + (featureIndex > -1 ? featureIndex : 0);
+    }
+
+    public string GetLatestVersionName(BuildState buildState, FeatureState featureState, bool otherThanFeatureState = false)
+    {
+        string latestVersion = "None";
+        for (int b = 0; b < builds.Count; b++)
+        {
+            if (builds[b].state == buildState)
+            {
+                for (int f = 0; f < builds[b].changeLog.Count; f++)
+                {
+                    if (otherThanFeatureState)
+                    {
+                        if (builds[b].changeLog[f].state != featureState)
+                            latestVersion = b + "." + f + " @ " + builds[b].name + " > " + builds[b].changeLog[f].name;
+                    }
+                    else
+                    {
+                        if (builds[b].changeLog[f].state == featureState)
+                            latestVersion = b + "." + f + " @ " + builds[b].name + " > " + builds[b].changeLog[f].name;
+                    }
+                }
+            }
+        }
+        return latestVersion;
+    }
 }

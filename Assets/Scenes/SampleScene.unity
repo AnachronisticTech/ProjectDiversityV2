@@ -255,33 +255,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   builds:
-  - name: 22w21a
-    changeLog:
-    - name: test
-      desc: 
-      state: 5
-      isVisibleInInspector: 1
-    - name: kostis
-      desc: 
-      state: 5
-      isVisibleInInspector: 1
-    - name: panikkos
-      desc: 
-      state: 1
-      isVisibleInInspector: 1
-    state: 0
-    isVisibleInInspector: 1
   - name: New Build
     changeLog:
-    - name: er
+    - name: New Feature
       desc: 
-      state: 5
-      isVisibleInInspector: 1
-    - name: kokos
+      state: 0
+      isVisibleInInspector: 0
+    - name: New Feature
       desc: 
-      state: 5
-      isVisibleInInspector: 1
-    state: 1
+      state: 0
+      isVisibleInInspector: 0
+    state: 0
     isVisibleInInspector: 1
 --- !u!4 &528099845
 Transform:
