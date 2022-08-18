@@ -1,10 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using UnityEngine;
+/*
+ * Script developed by Andreas Monoyios
+ * GitHub: https://github.com/AMonoyios?tab=repositories
+ */
 
-using CoreAttributes;
-using UnityEditor;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 ///     [What does this TODOV2 do]
