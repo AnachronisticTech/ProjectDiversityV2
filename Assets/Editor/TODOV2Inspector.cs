@@ -9,12 +9,23 @@ using HelperEditorGUINamespace;
 public sealed class TODOV2Inspector : Editor
 {
     private TODOV2 root;
+    private GUIStyle InsetFoldoutStyle => new(EditorStyles.foldout)
+    {
+        margin = new RectOffset(10, 0, 0, 0)
+    };
 
-    private List<SerializedProperty> featureDescription = new();
+    private static Color baseColor = new();
+    private static Color PendingColor => Color.cyan;
+    private static Color DevelopementColor => Color.yellow;
+    private static Color TestingColor => Color.blue;
+    private static Color BugFixingColor => Color.red;
+    private static Color DoneColor => Color.magenta;
+    private static Color LiveColor => Color.green;
 
     private void OnEnable()
     {
         root = (TODOV2)target;
+        baseColor = GUI.color;
     }
 
     public override void OnInspectorGUI()
@@ -22,7 +33,7 @@ public sealed class TODOV2Inspector : Editor
         DrawVersionMonitor();
 
         DrawBuildControlPanel();
-        
+
         CustomEditorGUI.GuiLine();
 
         for (int b = 0; b < root.builds.Count; b++)
@@ -35,6 +46,7 @@ public sealed class TODOV2Inspector : Editor
                 root.builds[b].isVisibleInInspector = showBuild;
                 EditorUtility.SetDirty(root);
             }
+
             if (root.builds[b].isVisibleInInspector)
             {
                 EditorGUILayout.BeginVertical(EditorStyles.helpBox);
@@ -43,7 +55,7 @@ public sealed class TODOV2Inspector : Editor
                 CustomEditorGUI.DrawTextField(root, new GUIContent("Build name"), root.builds[b].name, "Renamed " + root.GetVersionName(b), (string newTextField) => { root.builds[b].name = newTextField; });
                 CustomEditorGUI.DrawButton(root, new GUIContent("X"), "Removed build " + root.GetVersionName(b), () => { root.builds.RemoveAt(b); });
                 EditorGUILayout.EndHorizontal();
-                
+
                 // Bug fix: when removing the last index of the list and on it points to an out of range index
                 if (b >= root.builds.Count)
                     continue;
@@ -53,13 +65,36 @@ public sealed class TODOV2Inspector : Editor
                 CustomEditorGUI.DrawButton(root, new GUIContent("+"), "Added new feature to list", () => { root.builds[b].changeLog.Add(new TODOV2.FeatureProperties()); });
                 CustomEditorGUI.DrawButton(root, new GUIContent("-"), "Removed last build from list", () => { root.builds[b].changeLog.RemoveAt(root.builds[b].changeLog.Count - 1); }, root.builds[b].changeLog.Count > 0);
                 EditorGUILayout.EndHorizontal();
-                
+
                 CustomEditorGUI.GuiLine();
-                
+
                 for (int f = 0; f < root.builds[b].changeLog.Count; f++)
                 {
+                    switch (root.builds[b].changeLog[f].state)
+                    {
+                        case TODOV2.FeatureState.Pending:
+                            GUI.color = PendingColor;
+                            break;
+                        case TODOV2.FeatureState.InDevelopment:
+                            GUI.color = DevelopementColor;
+                            break;
+                        case TODOV2.FeatureState.Testing:
+                            GUI.color = TestingColor;
+                            break;
+                        case TODOV2.FeatureState.BugFixing:
+                            GUI.color = BugFixingColor;
+                            break;
+                        case TODOV2.FeatureState.Done:
+                            GUI.color = DoneColor;
+                            break;
+                        case TODOV2.FeatureState.Live:
+                            GUI.color = LiveColor;
+                            break;
+                    }
+
+                    EditorGUILayout.BeginVertical(EditorStyles.helpBox);
                     EditorGUI.BeginChangeCheck();
-                    bool showFeature = EditorGUILayout.Foldout(root.builds[b].changeLog[f].isVisibleInInspector, new GUIContent(root.builds[b].changeLog[f].name), true);
+                    bool showFeature = EditorGUILayout.Foldout(root.builds[b].changeLog[f].isVisibleInInspector, new GUIContent(root.builds[b].changeLog[f].name), true, InsetFoldoutStyle);
                     if (EditorGUI.EndChangeCheck())
                     {
                         Undo.RecordObject(root, "Toggle visibility for feature " + root.GetVersionName(b, f));
@@ -91,6 +126,9 @@ public sealed class TODOV2Inspector : Editor
 
                         CustomEditorGUI.GuiLine();
                     }
+
+                    EditorGUILayout.EndVertical();
+                    GUI.color = baseColor;
                 }
 
                 EditorGUI.BeginChangeCheck();
