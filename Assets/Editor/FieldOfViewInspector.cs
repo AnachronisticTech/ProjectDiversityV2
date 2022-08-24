@@ -35,9 +35,9 @@ public sealed class FieldOFViewInspector : Editor
         Handles.DrawLine(root.transform.position, root.transform.position + viewAngleB * root.GetViewRadius);
 
         Handles.color = Color.red;
-        foreach (Transform interactableInRange in root.GetTransformsOfInteractablesInViewRange())
+        foreach (GameObject interactableInRange in root.GetListOfGameObjectsInViewRange)
         {
-            Handles.DrawLine(root.transform.position, interactableInRange.position);
+            Handles.DrawLine(root.transform.position, interactableInRange.transform.position);
         }
     }
 }

@@ -6,53 +6,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 /// <summary>
 ///     Temporary code to move player to the world space
 /// </summary>
-/// <remarks>
-///     Code courtesy of PekkeDev on Youtube
-///     source: https://www.youtube.com/watch?v=y_zdW5LIX5o&ab_channel=PekkeDev
-/// </remarks>
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(CharacterController))]
 public sealed class TempPlayerController : MonoBehaviour
 {
     [SerializeField]
     private float moveSpeed = 5.0f;
-    [SerializeField]
-    private LayerMask groundLayerMask;
 
-    private bool isMoving = false;
-    private NavMeshAgent agent;
+    private CharacterController characterController;
+    private Vector2 input;
+    private Vector3 movement;
+
+    private const string horizontal = "Horizontal";
+    private const string vertical = "Vertical";
 
     private void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        agent.speed = moveSpeed;
+        characterController = GetComponent<CharacterController>();
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 200.0f))
-            {
-                agent.SetDestination(hit.point);
-            }
-        }
-
-        if (!isMoving)
-        {
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 200.0f, groundLayerMask))
-            {
-                transform.LookAt(hit.point + Vector3.up * transform.position.y);
-            }
-        }
+        input = new(Input.GetAxis(horizontal), Input.GetAxis(vertical));
     }
 
     private void FixedUpdate()
     {
-        isMoving = agent.remainingDistance > agent.stoppingDistance;
+        /* Code curtesy of "about game making"
+         * Source: https://www.youtube.com/watch?v=VslgzNfibhs&ab_channel=aboutgamemaking
+         */
+        movement = characterController.transform.forward * input.y;
+        characterController.transform.Rotate((100.0f * Time.fixedDeltaTime) * input.x * Vector3.up);
+        characterController.Move(moveSpeed * Time.fixedDeltaTime * movement);
     }
 }
