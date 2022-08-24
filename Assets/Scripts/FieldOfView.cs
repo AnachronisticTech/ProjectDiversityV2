@@ -10,6 +10,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using CoreAttributes;
+
 /// <summary>
 ///     [What does this Vision do]
 /// </summary>
@@ -37,14 +39,16 @@ public sealed class FieldOfView : MonoBehaviour
     public GameObject GetClosestGameObjectInRange { get { return closestGameObjectInRange; } }
 
     [Header("Visuals")]
-    [SerializeField, Range(0.1f, 1.0f)]
-    private float fieldOfViewMeshResolution = 0.5f;
     [SerializeField]
+    private bool showVisualSettings = true;
+    [HideConditionally(nameof(showVisualSettings)), SerializeField, Range(0.1f, 1.0f)]
+    private float fieldOfViewMeshResolution = 0.5f;
+    [HideConditionally(nameof(showVisualSettings)), SerializeField]
     private MeshFilter viewMeshFilter;
     private Mesh viewMesh;
-    [SerializeField, Range(0, 10)]
+    [HideConditionally(nameof(showVisualSettings)), SerializeField, Range(0, 10)]
     private int edgeDetectionPrecision = 5;
-    [SerializeField, Range(0.0f, 1.0f)]
+    [HideConditionally(nameof(showVisualSettings)), SerializeField, Range(0.0f, 1.0f)]
     private float edgeDistThreshold = 0.5f;
 
     public Vector3 DirFromAngle(float angleDegrees, bool angleIsGlobal = false)

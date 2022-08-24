@@ -357,7 +357,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1
@@ -414,7 +414,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 479
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 2025068426}
+  m_TargetTexture: {fileID: 1339348381}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -451,7 +451,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdead8cb33dd43f48bf89793b71e8ea5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetScreenSize: {x: 384, y: 352}
+  enablePixelated: 1
+  targetScreenSize: {x: 640, y: 480}
   display: {fileID: 721960186}
 --- !u!1 &287136696
 GameObject:
@@ -688,6 +689,15 @@ MonoBehaviour:
     - name: Refactor old POV system
       desc: Fix edge detection issue
       state: 4
+      isVisibleInInspector: 0
+    state: 0
+    isVisibleInInspector: 1
+  - name: 22w34a
+    changeLog:
+    - name: CRT effect
+      desc: it renders on top of everything. Does not take into account the transparent
+        value.
+      state: 3
       isVisibleInInspector: 0
     state: 0
     isVisibleInInspector: 1
@@ -1058,7 +1068,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2025068426}
+  m_Texture: {fileID: 1339348381}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1757,6 +1767,43 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!84 &1339348381
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_ForcedFallbackFormat: 4
+  m_DownscaleFallback: 0
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 5
+  m_Width: 640
+  m_Height: 480
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 0
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!1 &1360196989
 GameObject:
   m_ObjectHideFlags: 0
@@ -2302,6 +2349,7 @@ MonoBehaviour:
     m_Bits: 256
   interactableObjectsInRange: []
   closestGameObjectInRange: {fileID: 0}
+  showVisualSettings: 0
   fieldOfViewMeshResolution: 0.5
   viewMeshFilter: {fileID: 1258713015}
   edgeDetectionPrecision: 2
@@ -2699,43 +2747,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1820484744}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!84 &2025068426
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_ForcedFallbackFormat: 4
-  m_DownscaleFallback: 0
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 5
-  m_Width: 256
-  m_Height: 224
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 0
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1 &2028150317
 GameObject:
   m_ObjectHideFlags: 0
@@ -2969,7 +2980,7 @@ MonoBehaviour:
   m_RequiresOpaqueTextureOption: 2
   m_CameraType: 0
   m_Cameras: []
-  m_RendererIndex: -1
+  m_RendererIndex: 0
   m_VolumeLayerMask:
     serializedVersion: 2
     m_Bits: 1

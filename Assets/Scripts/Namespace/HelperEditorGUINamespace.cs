@@ -43,5 +43,11 @@ namespace HelperEditorGUINamespace
             rect.height = i_height;
             EditorGUI.DrawRect(rect, new Color(0.5f, 0.5f, 0.5f, 1));
         }
+        public static void BeginHorizontal(System.Action content)
+        {
+            EditorGUILayout.BeginHorizontal();
+            content();
+            EditorGUILayout.EndHorizontal();
+        }
     }
 }

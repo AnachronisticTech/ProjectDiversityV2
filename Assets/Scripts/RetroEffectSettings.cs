@@ -6,6 +6,9 @@
 using UnityEngine.UI;
 using UnityEngine;
 
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -13,15 +16,18 @@ using UnityEditor;
 /// <summary>
 ///     [What does this Pixelated do]
 /// </summary>
+[RequireComponent(typeof(Camera))]
 public sealed class RetroEffectSettings : MonoBehaviour
 {
     private Camera renderCamera;
     private RenderTexture renderTexture;
 
-    [Header("Screen scaling settings")]
+    [Header("Pixelated display")]
+    [SerializeField]
+    private bool enablePixelated = false;
+    public bool UsingPixelated { get { return enablePixelated; } }
     [SerializeField]
     private Vector2Int targetScreenSize = new(256, 224);
-
     [SerializeField]
     private RawImage display;
 
@@ -33,10 +39,13 @@ public sealed class RetroEffectSettings : MonoBehaviour
     private void Start()
     {
         // Initialize the system
-        Init();
+        if (enablePixelated)
+        {
+            InitPixelated();
+        }
     }
 
-    public void Init()
+    public void InitPixelated()
     {
         // Initialize the camera and get screen size values
         if (!renderCamera) renderCamera = GetComponent<Camera>();
@@ -78,8 +87,11 @@ public sealed class RetroEffectSettingsInspector : Editor
 
         GUILayout.Space(5.0f);
 
-        if (GUILayout.Button(new GUIContent("Update camera", "This is only available in edit mode")))
-            root.Init();
+        if (root.UsingPixelated)
+        {
+            if (GUILayout.Button(new GUIContent("Update pixelated camera", "This is only available in edit mode")))
+                root.InitPixelated();
+        }
     }
 }
 #endif
